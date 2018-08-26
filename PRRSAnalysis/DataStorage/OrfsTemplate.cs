@@ -14,7 +14,7 @@ namespace PRRSAnalysis.DataStorage
 
     public class OrfTemplate
     {
-        public int Name { get; set; }
+        public string Name { get; set; }
         public int Start { get; set; }
         public int End { get; set; }
         public string Sequence { get; set; }

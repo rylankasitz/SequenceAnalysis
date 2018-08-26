@@ -23,7 +23,6 @@ namespace PRRSAnalysis
 
             _dataManager = dataManager;
             _runAnalysis = run;
-            
         }
 
         #region File Menu Methods

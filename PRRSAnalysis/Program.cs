@@ -22,6 +22,8 @@ namespace PRRSAnalysis
             ComponentPool analysisPool = new ComponentPool(dataManager);
             UserInterface userInterface = new UserInterface(dataManager, analysisPool.RunAnalysis);
 
+            dataManager.DeserializeJsonFiles();
+
             Application.Run(userInterface);
         }
     }

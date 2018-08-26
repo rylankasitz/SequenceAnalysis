@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace PRRSAnalysis.DataStorage
 {
@@ -16,17 +17,13 @@ namespace PRRSAnalysis.DataStorage
         #region FileLocations
 
         public string DataFolder { get; set; } = "_TempData\\";
-        public string OrfTempateFolder { get; set; } = "__OrfTemplates\\";
+        public string OrfTempateFolder { get; set; } = Path.GetFullPath("_OrfTemplates\\");
 
         #endregion
 
         #region OrfData
 
-        public Dictionary<string, string[]> aminoAcidChart { get; set; } = new Dictionary<string, string[]>()
-        {
-
-        };
-
+        public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
 
         #endregion
@@ -47,7 +44,9 @@ namespace PRRSAnalysis.DataStorage
         #region Settings Data
 
         public string MafftSettings { get; set; } = "Fast";
-
+        public bool RunReverseFrames { get; set; } = false;
+        public int MinimumOrfLength { get; set; } = 75;
+ 
         #endregion
 
         #region Data Conversion Methods
@@ -94,7 +93,7 @@ namespace PRRSAnalysis.DataStorage
         {
             Dictionary<string, string> fastaContents = FileToSequences(fileLocation);
             FileInfo fileInfo = new FileInfo(fileLocation);
-            string outfile = fileInfo.DirectoryName + "\\" + fileInfo.Name.Split('.')[0] + ".phyi";
+            string outfile = fileInfo.DirectoryName + "\\" + fileInfo.Name.Split('.')[0] + ".phy";
             StreamWriter writer = new StreamWriter(outfile);
             writer.WriteLine(fastaContents.Count + " " + fastaContents.Keys.First().Length);
             foreach (KeyValuePair<string, string> fastaContent in fastaContents)
@@ -169,7 +168,7 @@ namespace PRRSAnalysis.DataStorage
                     foreach (SequenceData sequenceData in SequencesUsed.Values)
                     {
                         OrfData orfData;
-                        if (sequenceData.OrfData.TryGetValue(name, out orfData))
+                        if (sequenceData.KnownOrfData.TryGetValue(name, out orfData))
                         {
                             writerAA.WriteLine(">" + orfData.Name);
                             writerAA.WriteLine(orfData.ContentsAA);
@@ -195,5 +194,12 @@ namespace PRRSAnalysis.DataStorage
         }
 
         #endregion
+
+        public void DeserializeJsonFiles()
+        {
+            AminoAcidChart = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(File.ReadAllText(OrfTempateFolder + "AminoAcidTemplate.json"));
+
+            OrfTemplates = JsonConvert.DeserializeObject<Dictionary<string, OrfsTemplate>>(File.ReadAllText(OrfTempateFolder + "PRRS_Orf_Template.json"));
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace PRRSAnalysis.Components
 
         public override void Run(string analysisItem)
         {
-            _commandlineRun.ProgramName = "PhyML-3.1_win32";
+            _commandlineRun.ProgramName = "PhyML-3.1_win32.exe";
             string infile = _dataManager.FastaToPhyiFile(_dataManager.Alignments[analysisItem].FileLocation);
             _commandlineRun.Arguments = "-i " + infile;
             _commandlineRun.Run();
@@ -31,7 +31,7 @@ namespace PRRSAnalysis.Components
             {
                 _dataManager.TreeData.Add(analysisItem, new TreeData());
             }
-            _dataManager.TreeData[analysisItem].NewickFile = _dataManager.Alignments[analysisItem].FileLocation + "_phyml_tree.txt";
+            _dataManager.TreeData[analysisItem].NewickFile = infile + "_phyml_tree.txt";
         }
     }
 }
