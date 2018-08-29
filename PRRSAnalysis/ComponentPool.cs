@@ -18,6 +18,7 @@ namespace PRRSAnalysis
 
         private IEnumerable<AnalysisLoop> _analysisComponents;
         private IEnumerable<SequenceLoop> _sequenceLoop;
+        private IEnumerable<SingleLoop> _singleLoops;
         private DataManager _dataManager;
 
         public ComponentPool(DataManager dataManager)
@@ -25,6 +26,7 @@ namespace PRRSAnalysis
             RunAnalysis = new RunDelegate(Run);
             _analysisComponents = GetEnumerableOfType<AnalysisLoop>(dataManager);
             _sequenceLoop = GetEnumerableOfType<SequenceLoop>(dataManager);
+            _singleLoops = GetEnumerableOfType<SingleLoop>(dataManager);
             _dataManager = dataManager;
             _dataManager.AnalysisNames.Add("Wholegenome");
         }
@@ -59,6 +61,10 @@ namespace PRRSAnalysis
                     {
                         component.Run(analysisName);
                     }     
+                }
+                foreach(SingleLoop singleLoop in _singleLoops)
+                {
+                    singleLoop.Run();
                 }
             }).Start();
         }

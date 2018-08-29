@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PRRSAnalysis.DataStorage;
 using PRRSAnalysis.ComponentLayouts;
+using PRRSAnalysis.AnalysisHelpers;
 using System.Collections.Specialized;
 using System.IO;
 using Newtonsoft.Json;
@@ -23,11 +24,11 @@ namespace PRRSAnalysis.Components
         public override void Run(string sequenceName)
         {
             string contents = _dataManager.SequencesUsed[sequenceName].Contents;
+
             Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
             addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
 
-            string json = JsonConvert.SerializeObject(_dataManager.SequencesUsed[sequenceName].OtherOrfData, Formatting.Indented);
-            File.WriteAllText(_dataManager.DataFolder + sequenceName + "_allOrfs.json", json);
+            _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
         }
 
         private Dictionary<string, int[]> findAllOrfs(string contents)
@@ -93,7 +94,7 @@ namespace PRRSAnalysis.Components
                                 {
                                     if (startPosition < stopPosition)
                                     {
-                                        if (stopPosition - startPosition >= _dataManager.MinimumOrfLength)
+                                        if (Math.Abs(stopPosition - startPosition) >= _dataManager.MinimumOrfLength)
                                         {
                                             allOrfs.Add("orf" + orfCount, new int[3] { startPosition, stopPosition, startCondonPair.Key });
                                             orfCount++;
@@ -111,21 +112,59 @@ namespace PRRSAnalysis.Components
             }
             return allOrfs;   
         }
-        private Dictionary<string, int[]> findKnownOrfs()
+        private Dictionary<string, OrfData> findKnownOrfs(Dictionary<string, OrfData> allOrfs)
         {
-            Dictionary<string, int[]> knownOrfs = new Dictionary<string, int[]>();
+            Dictionary<string, OrfData> knownOrfs = new Dictionary<string, OrfData>();
+            Dictionary<string, List<OrfData>> potentialOrfs = new Dictionary<string, List<OrfData>>();
+            OrfsTemplate orfTemplates = _dataManager.OrfTemplates[_dataManager.CurrentVirusKey];
+            foreach(OrfTemplate orfTemplate in orfTemplates.Orfs)
+            {
+                // Find potential orfs
+                foreach(KeyValuePair<string, OrfData> allOrfsPair in allOrfs)
+                {
+                    int lengthBuffer = Convert.ToInt32(orfTemplate.LengthAA * _dataManager.OrfLengthThreshold);
+                    if(allOrfsPair.Value.LengthAA > orfTemplate.LengthAA - lengthBuffer && 
+                       allOrfsPair.Value.LengthAA < orfTemplate.LengthAA + lengthBuffer)
+                    {
+                        if (!potentialOrfs.ContainsKey(orfTemplate.Name)) potentialOrfs.Add(orfTemplate.Name, new List<OrfData>());
+                        potentialOrfs[orfTemplate.Name].Add(allOrfsPair.Value);
+                    }
+                }
+
+                // Find closest related orf
+                bool found = false;
+                KeyValuePair<float, OrfData> highestOrf = new KeyValuePair<float, OrfData>(_dataManager.OrfIdentifierPIThreshold, new OrfData());
+                if (potentialOrfs.ContainsKey(orfTemplate.Name))
+                {
+                    foreach (OrfData potentialOrfPair in potentialOrfs[orfTemplate.Name])
+                    {
+                        float pi = GlobalCalculations.CalculatePercentIdentity(potentialOrfPair.ContentsAA, orfTemplate.Sequence);
+                        if (pi > highestOrf.Key)
+                        {
+                            highestOrf = new KeyValuePair<float, OrfData>(pi, potentialOrfPair);
+                            found = true;
+                        }
+                    }
+                    if (found) {
+                        knownOrfs.Add(orfTemplate.Name, highestOrf.Value);
+                        if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_n"))
+                            _dataManager.AnalysisNames.Add(orfTemplate.Name + "_n");
+                        if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_aa"))
+                            _dataManager.AnalysisNames.Add(orfTemplate.Name + "_aa");
+                    }
+                }
+            }
+
             return knownOrfs;
         }
-        private string NucleotideToAminoAcid(string contents)
-        {
-            return "";
-        }
+        
         private void addOrfToData(Dictionary<string, OrfData> data, Dictionary<string, int[]> orfs, string contents)
         {
             foreach(KeyValuePair<string, int[]> orfDataPair in orfs)
             {
                 if (!data.ContainsKey(orfDataPair.Key)) data.Add(orfDataPair.Key, new OrfData());
                 int length = Math.Abs(orfDataPair.Value[1] - orfDataPair.Value[0]);
+
                 string orfSequence = contents.Substring(orfDataPair.Value[0], length);
                 data[orfDataPair.Key].Name = orfDataPair.Key;
                 data[orfDataPair.Key].ContentsN = orfSequence;
@@ -135,8 +174,8 @@ namespace PRRSAnalysis.Components
                 data[orfDataPair.Key].StartLocationAA = orfDataPair.Value[0] / 3;
                 data[orfDataPair.Key].EndLocationAA = orfDataPair.Value[1] / 3;
                 data[orfDataPair.Key].LengthN = length + 3;
-                data[orfDataPair.Key].LengthA = length / 3 + 1;
-                data[orfDataPair.Key].ReadingFrame = orfDataPair.Value[2];
+                data[orfDataPair.Key].LengthAA = length / 3 + 1;
+                data[orfDataPair.Key].ReadingFrame = orfDataPair.Value[2]; 
             }            
         }
 
@@ -152,6 +191,28 @@ namespace PRRSAnalysis.Components
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
+        }
+        private string NucleotideToAminoAcid(string contents)
+        {
+            string aminoSeq = "";
+            for(int i = 0; i < contents.Length; i+=3)
+            {
+                string codon = contents.Substring(i, 3);
+                string aminoAcid = findAminoAcid(codon);
+                aminoSeq += aminoAcid;
+            }
+            return aminoSeq;
+        }
+        private string findAminoAcid(string codon)
+        {
+            foreach(KeyValuePair<string, string[]> keyValuePair in _dataManager.AminoAcidChart)
+            {
+                foreach(string c in keyValuePair.Value)
+                {
+                    if (c == codon.ToLower() && keyValuePair.Key != "Start" && keyValuePair.Key != "Stop") return keyValuePair.Key;
+                }
+            }
+            return "";
         }
 
         #endregion

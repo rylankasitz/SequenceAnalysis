@@ -25,11 +25,12 @@ namespace PRRSAnalysis.DataStorage
 
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
+        public float OrfLengthThreshold { get; set; } = .1f;
+        public float OrfIdentifierPIThreshold { get; set; } = 0;
 
         #endregion
 
         #region Analysis Data
-
 
         public Dictionary<string, SequenceData> SequencesUsed { get; set; } = new Dictionary<string, SequenceData>();
         public Dictionary<string, SequenceData> SequencesLoaded { get; set; } = new Dictionary<string, SequenceData>();
@@ -38,14 +39,36 @@ namespace PRRSAnalysis.DataStorage
         public Dictionary<string, AlignmentData> Alignments { get; set; } = new Dictionary<string, AlignmentData>();
         public Dictionary<string, Dictionary<string, PercentIdentityData>> PercentIdentities { get; set; } = new Dictionary<string, Dictionary<string, PercentIdentityData>>();
         public Dictionary<string, TreeData> TreeData { get; set; } = new Dictionary<string, TreeData>();
+        public Dictionary<string, List<RecombinationData>> RecombinationData { get; set; } = new Dictionary<string, List<RecombinationData>>();
 
         #endregion
 
         #region Settings Data
 
+        /// <summary>
+        /// Key of virsus specified in orf template to use
+        /// </summary>
+        public string CurrentVirusKey { get; set; } = "PRRS";
+        /// <summary>
+        /// Speed setting for Mafft alignment program
+        /// </summary>
         public string MafftSettings { get; set; } = "Fast";
+        /// <summary>
+        /// Location for the program RDP4
+        /// </summary>
+        public string RDPLocation { get; set; } = "C:\\Program Files (x86)\\RDP4";
+        /// <summary>
+        /// Whether or not to run the reverse reads to find new orfs
+        /// </summary>
         public bool RunReverseFrames { get; set; } = false;
+        /// <summary>
+        /// Minimun length a found orf can be
+        /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
+        /// <summary>
+        /// Maximun length that a sequence name will be when being displayed in the program
+        /// </summary>
+        public int MaximunNameLength { get; set; } = 20;
  
         #endregion
 
@@ -68,7 +91,7 @@ namespace PRRSAnalysis.DataStorage
                         {
                             if (line[0] == '>')
                             {
-                                name = line.Substring(1, line.Length - 1);
+                                name = CutName(line.Substring(1, line.Length - 1));
                                 if (!sequences.ContainsKey(name))
                                 {
                                     sequences.Add(name, "");
@@ -92,16 +115,22 @@ namespace PRRSAnalysis.DataStorage
         public string FastaToPhyiFile(string fileLocation)
         {
             Dictionary<string, string> fastaContents = FileToSequences(fileLocation);
-            FileInfo fileInfo = new FileInfo(fileLocation);
-            string outfile = fileInfo.DirectoryName + "\\" + fileInfo.Name.Split('.')[0] + ".phy";
+            string[] fileparts = fileLocation.Split('.');
+            string outfile = fileparts[fileparts.Length - 2] + ".phy";
             StreamWriter writer = new StreamWriter(outfile);
-            writer.WriteLine(fastaContents.Count + " " + fastaContents.Keys.First().Length);
+            writer.WriteLine(fastaContents.Count + " " + fastaContents.Values.First().Length);
             foreach (KeyValuePair<string, string> fastaContent in fastaContents)
             {
                 writer.WriteLine(fastaContent.Key + "\t\t\t" + fastaContent.Value);
             }
             writer.Close();
             return outfile;
+        }
+        public string CutName(string name)
+        {
+            if (name.Length > MaximunNameLength) name = name.Split(' ')[0];
+            if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength);
+            return name;
         }
 
         #endregion
@@ -152,34 +181,30 @@ namespace PRRSAnalysis.DataStorage
             {
                 if (!orfFile)
                 {
-                    StreamWriter writer = new StreamWriter(DataFolder + name + "_n.fasta");
+                    StreamWriter writer = new StreamWriter(DataFolder + name + ".fasta");
                     foreach (SequenceData sequenceData in SequencesUsed.Values)
                     {
                         writer.WriteLine(">" + sequenceData.Name);
                         writer.WriteLine(sequenceData.Contents);
                     }
                     writer.Close();
-                    AnalysisFiles.Add(name, DataFolder + name + "_n");
+                    AnalysisFiles.Add(name, DataFolder + name);
                 }
                 else
                 {
-                    StreamWriter writerAA = new StreamWriter(DataFolder + name + "_aa");
-                    StreamWriter writerN = new StreamWriter(DataFolder + name + "_n");
+                    StreamWriter writer = new StreamWriter(DataFolder + name + ".fasta");
                     foreach (SequenceData sequenceData in SequencesUsed.Values)
                     {
                         OrfData orfData;
-                        if (sequenceData.KnownOrfData.TryGetValue(name, out orfData))
+                        if (sequenceData.KnownOrfData.TryGetValue(name.Split('_')[0], out orfData))
                         {
-                            writerAA.WriteLine(">" + orfData.Name);
-                            writerAA.WriteLine(orfData.ContentsAA);
-                            writerN.WriteLine(">" + orfData.Name);
-                            writerN.WriteLine(orfData.ContentsN);
+                            writer.WriteLine(">" + sequenceData.Name);
+                            if (name.Split('_')[1] == "aa") writer.WriteLine(orfData.ContentsAA);
+                            else writer.WriteLine(orfData.ContentsN);
                         }
                     }
-                    writerAA.Close();
-                    writerN.Close();
-                    AnalysisFiles.Add(name, name + "_aa");
-                    AnalysisFiles.Add(name, name + "_n");
+                    writer.Close();
+                    AnalysisFiles.Add(name, DataFolder + name);
                 }
             }
             catch

@@ -23,6 +23,8 @@ namespace PRRSAnalysis
 
             _dataManager = dataManager;
             _runAnalysis = run;
+
+            uxSequenceList.ItemCheck += uxSequenceListItem_Click;
         }
 
         #region File Menu Methods
@@ -56,6 +58,7 @@ namespace PRRSAnalysis
                         _dataManager.AddSequencesFromFile(file);
                     }
                 }
+                updateSequenceList();
             }
             catch (Exception e)
             {
@@ -73,6 +76,7 @@ namespace PRRSAnalysis
                         _dataManager.AddSequencesFromFile(file);
                     }
                 }
+                updateSequenceList();
             }
             catch (Exception e)
             {
@@ -85,6 +89,31 @@ namespace PRRSAnalysis
         private void uxRunFullAnalysis_Click(object sender, EventArgs e)
         {
             _runAnalysis();
+        }
+
+        private void uxSequenceListItem_Click(object sender, EventArgs e)
+        {
+            CheckedListBox checkBox = (CheckedListBox) sender;
+            if (!checkBox.CheckedItems.Contains(checkBox.SelectedItem))
+            {
+                if (!_dataManager.SequencesLoaded.ContainsKey(checkBox.SelectedItem.ToString()))
+                    _dataManager.SequencesLoaded.Add(checkBox.SelectedItem.ToString(), new SequenceData());
+                if (!_dataManager.SequencesUsed.ContainsKey(checkBox.SelectedItem.ToString()))
+                    _dataManager.SequencesUsed.Add(checkBox.SelectedItem.ToString(), _dataManager.SequencesLoaded[checkBox.SelectedItem.ToString()]);
+            }
+            else
+            {
+                if (_dataManager.SequencesUsed.ContainsKey(checkBox.SelectedItem.ToString()))
+                    _dataManager.SequencesUsed.Remove(checkBox.SelectedItem.ToString());
+            }
+        }
+
+        private void updateSequenceList()
+        {
+            foreach(SequenceData sequenceData in _dataManager.SequencesLoaded.Values)
+            {
+                uxSequenceList.Items.Add(sequenceData.Name); 
+            }
         }
     }
 }

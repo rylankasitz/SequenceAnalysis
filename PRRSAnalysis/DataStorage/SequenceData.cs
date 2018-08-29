@@ -23,7 +23,7 @@ namespace PRRSAnalysis.DataStorage
         public int EndLocationAA { get; set; } = 0;
         public int StartLocationN { get; set; } = 0;
         public int EndLocationN { get; set; } = 0;
-        public int LengthA { get; set; } = 0;
+        public int LengthAA { get; set; } = 0;
         public int LengthN { get; set; } = 0;
         public int ReadingFrame { get; set; } = 1;
     }

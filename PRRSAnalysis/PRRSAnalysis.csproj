@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -49,16 +52,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalysisHelpers\GlobalCalculations.cs" />
+    <Compile Include="ComponentLayouts\SingleLoop.cs" />
     <Compile Include="Components\Alignment.cs" />
     <Compile Include="Components\OrfFinder.cs" />
     <Compile Include="Components\PercentIdentities.cs" />
     <Compile Include="AnalysisHelpers\CommandlineRun.cs" />
     <Compile Include="ComponentPool.cs" />
+    <Compile Include="Components\Recombination.cs" />
     <Compile Include="Components\TreeAnalysis.cs" />
     <Compile Include="DataStorage\AlignmentData.cs" />
     <Compile Include="DataStorage\DataManager.cs" />
     <Compile Include="DataStorage\OrfsTemplate.cs" />
     <Compile Include="DataStorage\PercentIdentityData.cs" />
+    <Compile Include="DataStorage\RecombinationData.cs" />
     <Compile Include="DataStorage\SequenceData.cs" />
     <Compile Include="DataStorage\TreeData.cs" />
     <Compile Include="ComponentLayouts\AnalysisLoop.cs" />
@@ -83,6 +90,9 @@
     <EmbeddedResource Include="UserInterface.resx">
       <DependentUpon>UserInterface.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

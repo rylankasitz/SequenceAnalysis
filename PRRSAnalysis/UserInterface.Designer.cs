@@ -41,6 +41,7 @@
             this.uxRunFullAnalysis = new System.Windows.Forms.ToolStripMenuItem();
             this.uxOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.uxFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.uxSequenceList = new System.Windows.Forms.CheckedListBox();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -136,11 +137,21 @@
             // 
             this.uxOpenFileDialog.FileName = "uxOpenFileDialog";
             // 
+            // uxSequenceList
+            // 
+            this.uxSequenceList.CheckOnClick = true;
+            this.uxSequenceList.FormattingEnabled = true;
+            this.uxSequenceList.Location = new System.Drawing.Point(0, 28);
+            this.uxSequenceList.Name = "uxSequenceList";
+            this.uxSequenceList.Size = new System.Drawing.Size(242, 424);
+            this.uxSequenceList.TabIndex = 1;
+            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.uxSequenceList);
             this.Controls.Add(this.toolStrip1);
             this.Name = "UserInterface";
             this.Text = "Form1";
@@ -165,6 +176,7 @@
         private System.Windows.Forms.ToolStripMenuItem uxRunFullAnalysis;
         private System.Windows.Forms.OpenFileDialog uxOpenFileDialog;
         private System.Windows.Forms.FolderBrowserDialog uxFolderDialog;
+        private System.Windows.Forms.CheckedListBox uxSequenceList;
     }
 }
 
