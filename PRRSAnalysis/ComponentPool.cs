@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using PRRSAnalysis.ComponentLayouts;
 using System.Threading;
+using System.Collections;
+using PRRSAnalysis.Output;
+using PRRSAnalysis.Components;
 
 public delegate void RunDelegate();
 
@@ -24,9 +27,9 @@ namespace PRRSAnalysis
         public ComponentPool(DataManager dataManager)
         {
             RunAnalysis = new RunDelegate(Run);
-            _analysisComponents = GetEnumerableOfType<AnalysisLoop>(dataManager);
-            _sequenceLoop = GetEnumerableOfType<SequenceLoop>(dataManager);
-            _singleLoops = GetEnumerableOfType<SingleLoop>(dataManager);
+            _analysisComponents = GetEnumerableOfType<AnalysisLoop>(dataManager).OrderBy(s => s.Priority);
+            _sequenceLoop = GetEnumerableOfType<SequenceLoop>(dataManager).OrderBy(s => s.Priority);
+            _singleLoops = GetEnumerableOfType<SingleLoop>(dataManager).OrderBy(s => s.Priority);
             _dataManager = dataManager;
             _dataManager.AnalysisNames.Add("Wholegenome");
         }

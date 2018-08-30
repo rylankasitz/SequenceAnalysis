@@ -18,6 +18,7 @@ namespace PRRSAnalysis.Components
 
         public OrfFinder(DataManager dataManager)
         {
+            Priority = 1;
             _dataManager = dataManager;
         }
 
@@ -31,6 +32,11 @@ namespace PRRSAnalysis.Components
             _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
         }
 
+        /// <summary>
+        /// Finds all of the orfs in a string of nucleotide sequences
+        /// </summary>
+        /// <param name="contents">Contents of file in nt</param>
+        /// <returns>Dictionary of all orfs with location</returns>
         private Dictionary<string, int[]> findAllOrfs(string contents)
         {
             int seqeuenceLength = contents.Length;
@@ -112,6 +118,12 @@ namespace PRRSAnalysis.Components
             }
             return allOrfs;   
         }
+
+        /// <summary>
+        /// Compares all orfs to the orf templates to find all of the known orfs
+        /// </summary>
+        /// <param name="allOrfs"></param>
+        /// <returns>Dictionary of orfs with location data</returns>
         private Dictionary<string, OrfData> findKnownOrfs(Dictionary<string, OrfData> allOrfs)
         {
             Dictionary<string, OrfData> knownOrfs = new Dictionary<string, OrfData>();
@@ -157,7 +169,13 @@ namespace PRRSAnalysis.Components
 
             return knownOrfs;
         }
-        
+
+        /// <summary>
+        /// Adds orfs the the data manager
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="orfs"></param>
+        /// <param name="contents"></param>
         private void addOrfToData(Dictionary<string, OrfData> data, Dictionary<string, int[]> orfs, string contents)
         {
             foreach(KeyValuePair<string, int[]> orfDataPair in orfs)
