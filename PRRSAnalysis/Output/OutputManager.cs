@@ -7,29 +7,33 @@ using Newtonsoft.Json;
 using PRRSAnalysis.ComponentLayouts;
 using PRRSAnalysis.DataStorage;
 using System.IO;
+using PRRSAnalysis.AnalysisHelpers;
+using System.Diagnostics;
 
 namespace PRRSAnalysis.Output
 {
-    public class OutputManager : AnalysisLoop
+    public class OutputManager : SingleLoop
     {
         private DataManager _dataManager;
-
+        private CommandlineRun _commandlineRun;
+       
         public OutputManager(DataManager dataManager)
         {
             Priority = 4;
+
             _dataManager = dataManager;
+            _commandlineRun = new CommandlineRun();
         }
 
-        public override void Run(string analysisItem)
+        public override void Run()
         {
-            if (!Directory.Exists(_dataManager.DataFolder + "JsonFiles\\"))
-                Directory.CreateDirectory(_dataManager.DataFolder + "JsonFiles\\");
-
-            string jsonPercentIdentity = JsonConvert.SerializeObject(_dataManager.PercentIdentities[analysisItem]);
-            File.WriteAllText(_dataManager.DataFolder + "JsonFiles\\" + analysisItem + "_PI.json", jsonPercentIdentity);
-
-            string jsonRecombination = JsonConvert.SerializeObject(_dataManager.PercentIdentities[analysisItem]);
-            File.WriteAllText(_dataManager.DataFolder + "JsonFiles\\" + analysisItem + "_Recomb.json", jsonRecombination);
+            _dataManager.WriteJsonFile(_dataManager.PercentIdentities, "PercentIdentities");
+            _dataManager.WriteJsonFile(_dataManager.RecombinationData, "Recombination");
+            _dataManager.WriteJsonFile(_dataManager.AnalysisNames, "AnalysisNames");
+            _dataManager.WriteJsonFile(_dataManager.TreeData, "Trees");
+            _commandlineRun.ProgramName = "BuildGraphs.exe";
+            _commandlineRun.Arguments = "\"" + Path.GetFullPath(_dataManager.DataFolder) + "\"";
+            _commandlineRun.Run();
         }
     }
 }

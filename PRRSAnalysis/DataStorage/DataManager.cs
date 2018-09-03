@@ -37,7 +37,7 @@ namespace PRRSAnalysis.DataStorage
         public List<string> AnalysisNames { get; set; } = new List<string>();
         public Dictionary<string, string> AnalysisFiles { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, AlignmentData> Alignments { get; set; } = new Dictionary<string, AlignmentData>();
-        public Dictionary<string, Dictionary<string, PercentIdentityData>> PercentIdentities { get; set; } = new Dictionary<string, Dictionary<string, PercentIdentityData>>();
+        public Dictionary<string, PercentIdentityData> PercentIdentities { get; set; } = new Dictionary<string, PercentIdentityData>();
         public Dictionary<string, TreeData> TreeData { get; set; } = new Dictionary<string, TreeData>();
         public Dictionary<string, List<RecombinationData>> RecombinationData { get; set; } = new Dictionary<string, List<RecombinationData>>();
 
@@ -216,6 +216,11 @@ namespace PRRSAnalysis.DataStorage
         {
             SequencesUsed = new Dictionary<string, SequenceData>();
             SequencesLoaded = new Dictionary<string, SequenceData>();
+        }
+        public void WriteJsonFile(object o, string fileName)
+        {
+            string json = JsonConvert.SerializeObject(o);
+            File.WriteAllText(DataFolder + fileName + ".json", json);
         }
 
         #endregion

@@ -20,21 +20,28 @@ namespace PRRSAnalysis.Components
 
         public override void Run(string analysisName)
         {
-            _dataManager.PercentIdentities[analysisName] = new Dictionary<string, PercentIdentityData>();
+            _dataManager.PercentIdentities[analysisName] = new PercentIdentityData();
             foreach (KeyValuePair<string, string> sequence1 in _dataManager.Alignments[analysisName].Contents)
             {
-                _dataManager.PercentIdentities[analysisName][sequence1.Key] = new PercentIdentityData();
+                _dataManager.PercentIdentities[analysisName].Dic[sequence1.Key] = new Dictionary<string, float>();
+                _dataManager.PercentIdentities[analysisName].DicInverse[sequence1.Key] = new Dictionary<string, float>();
+                _dataManager.PercentIdentities[analysisName].Sequences.Add(sequence1.Key);
+                List<float> dataList = new List<float>();
+                float total = 0;
+                int count = 0;
                 foreach (KeyValuePair<string, string> sequence2 in _dataManager.Alignments[analysisName].Contents)
-                {
+                {                    
                     float percent = GlobalCalculations.CalculatePercentIdentity(sequence1.Value, sequence2.Value);
-                    if (!_dataManager.PercentIdentities[analysisName][sequence1.Key].PercentIdentityComparisons.ContainsKey(sequence2.Key))
+                    if (sequence1.Key != sequence2.Key) total += percent; count++;
+                    if (!_dataManager.PercentIdentities[analysisName].Dic[sequence1.Key].ContainsKey(sequence2.Key))
                     {
-                        _dataManager.PercentIdentities[analysisName][sequence1.Key].PercentIdentityComparisons[sequence2.Key] = percent;
-                    }                  
+                        _dataManager.PercentIdentities[analysisName].Dic[sequence1.Key][sequence2.Key] = percent;
+                        _dataManager.PercentIdentities[analysisName].DicInverse[sequence1.Key][sequence2.Key] = 100 - percent;
+                    }
+                    dataList.Add(percent);
                 }
+                _dataManager.PercentIdentities[analysisName].Data.Add(dataList);
             }
         }
-
-        
     }
 }

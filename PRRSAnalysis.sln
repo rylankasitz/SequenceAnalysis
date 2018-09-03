@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRRSAnalysis", "PRRSAnalysis\PRRSAnalysis.csproj", "{92C29BDD-A8CB-4A16-A644-1565ED2A0652}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "OutputGraphs", "PythonApplication1\OutputGraphs.pyproj", "{FE7FE568-9770-4246-A83F-F3E58BDD3858}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "OutputGraphs", "OutputGraphs\OutputGraphs.pyproj", "{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +17,8 @@ Global
 		{92C29BDD-A8CB-4A16-A644-1565ED2A0652}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92C29BDD-A8CB-4A16-A644-1565ED2A0652}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92C29BDD-A8CB-4A16-A644-1565ED2A0652}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE7FE568-9770-4246-A83F-F3E58BDD3858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE7FE568-9770-4246-A83F-F3E58BDD3858}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

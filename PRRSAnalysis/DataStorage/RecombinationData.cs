@@ -10,5 +10,6 @@ namespace PRRSAnalysis.DataStorage
     {
         public int StartSite { get; set; }
         public int EndSite { get; set; }
+        public int SequenceLength { get; set; }
     }
 }

@@ -9,6 +9,9 @@ namespace PRRSAnalysis.DataStorage
     public class PercentIdentityData
     {
         public string Name { get; set; }
-        public Dictionary<string, float> PercentIdentityComparisons { get; set; } = new Dictionary<string, float>();
+        public List<string> Sequences { get; set; } = new List<string>();
+        public List<List<float>> Data { get; set; } = new List<List<float>>();
+        public Dictionary<string, Dictionary<string, float>> Dic { get; set; } = new Dictionary<string, Dictionary<string, float>>();
+        public Dictionary<string, Dictionary<string, float>> DicInverse { get; set; } = new Dictionary<string, Dictionary<string, float>>();
     }
 }

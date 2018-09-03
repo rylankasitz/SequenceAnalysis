@@ -34,7 +34,7 @@ namespace PRRSAnalysis.Components
                 {
                     _dataManager.TreeData.Add(analysisItem, new TreeData());
                 }
-                _dataManager.TreeData[analysisItem].NewickFile = infile + "_phyml_tree.txt";
+                _dataManager.TreeData[analysisItem].NewickFile = Path.GetFullPath(infile + "_phyml_tree.txt");
             }
         }
     }
