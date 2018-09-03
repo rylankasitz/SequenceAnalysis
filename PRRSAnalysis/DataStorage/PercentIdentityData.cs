@@ -13,5 +13,6 @@ namespace PRRSAnalysis.DataStorage
         public List<List<float>> Data { get; set; } = new List<List<float>>();
         public Dictionary<string, Dictionary<string, float>> Dic { get; set; } = new Dictionary<string, Dictionary<string, float>>();
         public Dictionary<string, Dictionary<string, float>> DicInverse { get; set; } = new Dictionary<string, Dictionary<string, float>>();
+        public Dictionary<string, Dictionary<int, Dictionary<string, string>>> SiteChanges { get; set; } = new Dictionary<string, Dictionary<int, Dictionary<string, string>>>();
     }
 }

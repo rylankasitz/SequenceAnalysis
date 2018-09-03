@@ -150,6 +150,7 @@ namespace PRRSAnalysis.Components
                 {
                     foreach (OrfData potentialOrfPair in potentialOrfs[orfTemplate.Name])
                     {
+                        Dictionary<int, Dictionary<string, string>> ignore;
                         float pi = GlobalCalculations.CalculatePercentIdentity(potentialOrfPair.ContentsAA, orfTemplate.Sequence);
                         if (pi > highestOrf.Key)
                         {

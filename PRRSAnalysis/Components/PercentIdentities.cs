@@ -29,9 +29,10 @@ namespace PRRSAnalysis.Components
                 List<float> dataList = new List<float>();
                 float total = 0;
                 int count = 0;
+                Dictionary<int, Dictionary<string, string>> siteChanges = new Dictionary<int, Dictionary<string, string>>();
                 foreach (KeyValuePair<string, string> sequence2 in _dataManager.Alignments[analysisName].Contents)
-                {                    
-                    float percent = GlobalCalculations.CalculatePercentIdentity(sequence1.Value, sequence2.Value);
+                {              
+                    float percent = GlobalCalculations.CalculatePercentIdentity(sequence1.Value, sequence2.Value, sequence2.Key, siteChanges);
                     if (sequence1.Key != sequence2.Key) total += percent; count++;
                     if (!_dataManager.PercentIdentities[analysisName].Dic[sequence1.Key].ContainsKey(sequence2.Key))
                     {
@@ -39,7 +40,9 @@ namespace PRRSAnalysis.Components
                         _dataManager.PercentIdentities[analysisName].DicInverse[sequence1.Key][sequence2.Key] = 100 - percent;
                     }
                     dataList.Add(percent);
+                    
                 }
+                _dataManager.PercentIdentities[analysisName].SiteChanges[sequence1.Key] = siteChanges;
                 _dataManager.PercentIdentities[analysisName].Data.Add(dataList);
             }
         }

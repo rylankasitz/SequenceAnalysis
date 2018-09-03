@@ -18,6 +18,7 @@ namespace PRRSAnalysis.DataStorage
 
         public string DataFolder { get; set; } = "_TempData\\";
         public string OrfTempateFolder { get; set; } = Path.GetFullPath("_OrfTemplates\\");
+        public string OutputFolder { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\";
 
         #endregion
 
@@ -222,14 +223,28 @@ namespace PRRSAnalysis.DataStorage
             string json = JsonConvert.SerializeObject(o);
             File.WriteAllText(DataFolder + fileName + ".json", json);
         }
-
-        #endregion
-
         public void DeserializeJsonFiles()
         {
             AminoAcidChart = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(File.ReadAllText(OrfTempateFolder + "AminoAcidTemplate.json"));
 
             OrfTemplates = JsonConvert.DeserializeObject<Dictionary<string, OrfsTemplate>>(File.ReadAllText(OrfTempateFolder + "PRRS_Orf_Template.json"));
         }
+        public string CreateOutputDirectory(string name)
+        {
+            if (!Directory.Exists(OutputFolder + name)) {
+                try
+                {
+                    Directory.CreateDirectory(OutputFolder + name);
+                }
+                catch
+                {
+                    throw new Exception("Output folder does not exist");
+                }
+            }
+            return OutputFolder + name + "\\";
+        }
+
+        #endregion
+
     }
 }
