@@ -31,6 +31,7 @@ namespace PRRSAnalysis.Output
             writeSiteChanges();
 
             // Graph Stuff
+            _dataManager.WriteJsonFile(_dataManager.SequencesUsed, "Sequences");
             _dataManager.WriteJsonFile(_dataManager.PercentIdentities, "PercentIdentities");
             _dataManager.WriteJsonFile(_dataManager.RecombinationData, "Recombination");
             _dataManager.WriteJsonFile(_dataManager.AnalysisNames, "AnalysisNames");

@@ -88,6 +88,7 @@ namespace PRRSAnalysis
 
         private void uxRunFullAnalysis_Click(object sender, EventArgs e)
         {
+            _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
             _runAnalysis();
         }
 
@@ -112,7 +113,8 @@ namespace PRRSAnalysis
         {
             foreach(SequenceData sequenceData in _dataManager.SequencesLoaded.Values)
             {
-                uxSequenceList.Items.Add(sequenceData.Name); 
+                if(!sequenceData.Vaccine)
+                    uxSequenceList.Items.Add(sequenceData.Name); 
             }
         }
     }

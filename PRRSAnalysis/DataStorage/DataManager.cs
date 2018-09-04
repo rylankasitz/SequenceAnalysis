@@ -51,6 +51,10 @@ namespace PRRSAnalysis.DataStorage
         /// </summary>
         public string CurrentVirusKey { get; set; } = "PRRS";
         /// <summary>
+        /// Location of vaccine strands to compare to
+        /// </summary>
+        public string VaccineLocation { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\PRRSVaccine.fasta";
+        /// <summary>
         /// Speed setting for Mafft alignment program
         /// </summary>
         public string MafftSettings { get; set; } = "Fast";
@@ -66,6 +70,13 @@ namespace PRRSAnalysis.DataStorage
         /// Minimun length a found orf can be
         /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
+        public List<List<string>> CombinedOrfs { get; set; } = new List<List<string>>()
+        {
+            new List<string>()
+            {
+                "Orf2b", "Orf5a"
+            }
+        };
         /// <summary>
         /// Maximun length that a sequence name will be when being displayed in the program
         /// </summary>
@@ -138,7 +149,7 @@ namespace PRRSAnalysis.DataStorage
 
         #region Reading / Writing Methods
 
-        public void AddSequencesFromFile(string fileLocation)
+        public void AddSequencesFromFile(string fileLocation, bool vaccine = false)
         {
             Dictionary<string, string> sequences = FileToSequences(fileLocation);
             foreach(KeyValuePair<string, string> sequence in sequences)
@@ -148,9 +159,11 @@ namespace PRRSAnalysis.DataStorage
                     SequencesUsed.Add(sequence.Key, new SequenceData());
                     SequencesUsed[sequence.Key].Name = sequence.Key;
                     SequencesUsed[sequence.Key].Contents = sequence.Value;
+                    SequencesUsed[sequence.Key].Vaccine = vaccine;
                     SequencesLoaded.Add(sequence.Key, new SequenceData());
                     SequencesLoaded[sequence.Key].Name = sequence.Key;
                     SequencesLoaded[sequence.Key].Contents = sequence.Value;
+                    SequencesLoaded[sequence.Key].Vaccine = vaccine;
                 }
             }
         }
@@ -210,7 +223,7 @@ namespace PRRSAnalysis.DataStorage
             }
             catch
             {
-                throw new Exception("Was unable to write sequence file for " + name);
+                 throw new Exception("Was unable to write sequence file for " + name);
             }
         }
         public void ClearAllSequenceData()

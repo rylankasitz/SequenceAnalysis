@@ -30,6 +30,13 @@ namespace PRRSAnalysis.Components
             addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
 
             _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
+            foreach(List<string> orfs in _dataManager.CombinedOrfs)
+            {
+                //try {
+                    createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
+            //}
+                //catch { throw new Exception("Orfs do not exist for combined orf file"); }
+            }         
         }
 
         /// <summary>
@@ -150,7 +157,6 @@ namespace PRRSAnalysis.Components
                 {
                     foreach (OrfData potentialOrfPair in potentialOrfs[orfTemplate.Name])
                     {
-                        Dictionary<int, Dictionary<string, string>> ignore;
                         float pi = GlobalCalculations.CalculatePercentIdentity(potentialOrfPair.ContentsAA, orfTemplate.Sequence);
                         if (pi > highestOrf.Key)
                         {
@@ -200,6 +206,22 @@ namespace PRRSAnalysis.Components
 
         #region Private Helper Methods
 
+        private void createCombinedOrf(string startOrf, string endOrf, string sequencename, string contents)
+        {
+            Dictionary<string, int[]> newOrf = new Dictionary<string, int[]>();
+            string newName = startOrf + "-" + endOrf;
+            int start = _dataManager.SequencesUsed[sequencename].KnownOrfData[startOrf].StartLocationN;
+            int end = _dataManager.SequencesUsed[sequencename].KnownOrfData[endOrf].EndLocationN;
+            newOrf[newName] = new int[3];
+            newOrf[startOrf + "-" + endOrf][0] = start;
+            newOrf[startOrf + "-" + endOrf][1] = end;
+            addOrfToData(_dataManager.SequencesUsed[sequencename].KnownOrfData, newOrf, contents);
+
+            if (!_dataManager.AnalysisNames.Contains(newName + "_n"))
+                _dataManager.AnalysisNames.Add(newName + "_n");
+            if (!_dataManager.AnalysisNames.Contains(newName + "_aa"))
+                _dataManager.AnalysisNames.Add(newName + "_aa");
+        }
         private string switchChars(string s, char c1, char c2)
         {
             var result = s.Select(x => x == c1 ? c2 : (x == c2 ? c1 : x)).ToArray();
@@ -214,7 +236,7 @@ namespace PRRSAnalysis.Components
         private string NucleotideToAminoAcid(string contents)
         {
             string aminoSeq = "";
-            for(int i = 0; i < contents.Length; i+=3)
+            for(int i = 0; i < contents.Length - 3; i+=3)
             {
                 string codon = contents.Substring(i, 3);
                 string aminoAcid = findAminoAcid(codon);

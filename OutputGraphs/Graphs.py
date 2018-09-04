@@ -6,21 +6,25 @@ from collections import OrderedDict
 from PyQt5 import QtGui
 from ete3 import Tree, TreeStyle
 
-def StackedSequenceGraph(inputData, sequencename, nameOrder, labelsize=20):
+def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsize=11):
     data = []
     annotations = []  
     sequences = []
     orfs = []
     for orfname in nameOrder:
-        if sequencename in inputData[orfname]["Dic"]: 
+        if sequencename in inputData[orfname]["Dic"] and orfname != "Orf2b-Orf5a_aa": 
             sequences = inputData[orfname]["Sequences"][:]
             dataNormal = inputData[orfname]["Dic"][sequencename].copy()
             dataInverse = inputData[orfname]["DicInverse"][sequencename].copy()
-
-            
+                 
             sequences.remove(sequencename)
             del dataNormal[sequencename]
             del dataInverse[sequencename]
+            s = sequences[:]
+            for seq in s:      
+                if Sequences[seq]["Vaccine"]:
+                    sequences.remove(seq)
+                    
 
             orfparts = orfname.split('_')
             type = orfparts[len(orfparts)-1]
@@ -40,9 +44,9 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, labelsize=20):
                 total += inputData[orfname]["Dic"][sequencename][sequence]
                 dist += inputData[orfname]["DicInverse"][sequencename][sequence]
         average = round(total/len(orfs), 3)
-        annotations.append(dict(x=dist + 50, y=sequence, text=average, font=dict(size=labelsize), showarrow=False))
+        annotations.append(dict(x=dist + 70, y=sequence, text=average, font=dict(size=labelsize), showarrow=False))
 
-    return data, go.Layout(barmode='stack', annotations=annotations, xaxis=dict(showticklabels=False)), annotations
+    return data, go.Layout(barmode='stack', annotations=annotations), annotations
 
 def CreateDropDown(datalist, datalen, rangeD, annotations):
     buttons = []
@@ -53,6 +57,7 @@ def CreateDropDown(datalist, datalen, rangeD, annotations):
         dataArray += d
         for j in rangeD[d]:
             visible[j] = True
+        visible += [True]*100000
         buttons.append(dict(args=[{'visible': visible}, {'annotations': annotations[d]}], label=d, method='update'))
         visible = [False]*datalen
     return [dict(buttons=buttons, direction = 'down', pad = {'r': 10, 't': 10}, showactive = True, x = 0.1, xanchor = 'left', y = 1.1, 
@@ -62,7 +67,7 @@ def CreateRecombinationGraph(inputData, colors):
     bpsdata = OrderedDict()
     bpsPoints = OrderedDict()
     data = []
-    labels = ["Non Recombinations Site", "RecombinationSite"]\
+    labels = ["Non Recombinations Site", "RecombinationSite"]
     
     # Get data
     for seq, recombData in inputData.items():     
@@ -90,7 +95,7 @@ def CreateRecombinationGraph(inputData, colors):
     for i, key in enumerate(bpsdata.keys()):
         data.append(go.Bar(y=inputData.keys(), x=HelperMethods.match(inputData.keys(), bpsdata[key]), name=labels[(i)%2], orientation = 'h',
                     text=HelperMethods.match(inputData.keys(), bpsPoints[key]), marker=dict(color=colors[(i)%2]), hoverinfo='name+text')) 
-    return dict(data=data, layout=go.Layout(barmode='stack', showlegend=False))
+    return go.Figure(data=data, layout=go.Layout(barmode='stack', showlegend=False))
 
 def CreatePhyloGeneticTree(inputfile, outputfile, size):
     f = open(inputfile, "r")

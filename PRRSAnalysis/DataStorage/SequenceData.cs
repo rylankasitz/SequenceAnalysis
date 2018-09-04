@@ -10,6 +10,7 @@ namespace PRRSAnalysis.DataStorage
     {
         public string Name { get; set; }
         public string Contents { get; set; }
+        public bool Vaccine { get; set; } = false;
         public Dictionary<string, OrfData> KnownOrfData { get; set; } = new Dictionary<string, OrfData>();
         public Dictionary<string, OrfData> OtherOrfData { get; set; } = new Dictionary<string, OrfData>();
     }
