@@ -25,6 +25,22 @@ namespace PRRSAnalysis
             _runAnalysis = run;
 
             uxSequenceList.ItemCheck += uxSequenceListItem_Click;
+            uxVaccineLocationTextBox.Text = _dataManager.VaccineLocation;
+            uxMinOrfLengthTextbox.Text = _dataManager.MinimumOrfLength.ToString();
+            uxAlignmentType.SelectedItem = _dataManager.MafftSettings;
+            uxRunReverseReadsCB.Checked = _dataManager.RunReverseFrames;
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            //base.OnFormClosing(e);
+            _dataManager.SaveData();
+        }
+
+        private void uxRunFullAnalysis_Click(object sender, EventArgs e)
+        {
+            _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
+            _runAnalysis();
+            MessageBox.Show("Analysis is Finished");
         }
 
         #region File Menu Methods
@@ -85,12 +101,8 @@ namespace PRRSAnalysis
         }
 
         #endregion
-
-        private void uxRunFullAnalysis_Click(object sender, EventArgs e)
-        {
-            _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
-            _runAnalysis();
-        }
+       
+        #region Sequence List Events
 
         private void uxSequenceListItem_Click(object sender, EventArgs e)
         {
@@ -117,5 +129,46 @@ namespace PRRSAnalysis
                     uxSequenceList.Items.Add(sequenceData.Name); 
             }
         }
+
+        #endregion
+
+        #region Settings Change Events
+
+        private void uxAlignmentType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _dataManager.MafftSettings = uxAlignmentType.Text;
+        }
+
+        private void uxMinOrfLengthTextbox_TextChanged(object sender, EventArgs e)
+        {
+            _dataManager.MinimumOrfLength = Convert.ToInt32(uxMinOrfLengthTextbox.Text);
+        }
+
+        private void uxRunReverseReadsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            _dataManager.RunReverseFrames = uxRunReverseReadsCB.Checked;
+        }
+
+        private void uxVaccineLocationButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (uxOpenFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    uxVaccineLocationTextBox.Text = uxOpenFileDialog.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
+        private void uxVaccineLocationTextBox_TextChanged(object sender, EventArgs e)
+        {
+            _dataManager.VaccineLocation = uxVaccineLocationTextBox.Text;
+        }
+
+        #endregion
     }
 }

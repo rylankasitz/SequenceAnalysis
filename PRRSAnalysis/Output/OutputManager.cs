@@ -14,6 +14,7 @@ namespace PRRSAnalysis.Output
 {
     public class OutputManager : SingleLoop
     {
+        private int orfsPerLine;
         private DataManager _dataManager;
         private CommandlineRun _commandlineRun;
        
@@ -21,6 +22,7 @@ namespace PRRSAnalysis.Output
         {
             Priority = 4;
 
+            orfsPerLine = 10;
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }
@@ -28,7 +30,9 @@ namespace PRRSAnalysis.Output
         public override void Run()
         {
             // Write Data
+            moveAlignmentFiles();
             writeSiteChanges();
+            writeOrfsFound();
 
             // Graph Stuff
             _dataManager.WriteJsonFile(_dataManager.SequencesUsed, "Sequences");
@@ -43,6 +47,37 @@ namespace PRRSAnalysis.Output
 
         #region Output Methods
 
+        private void moveAlignmentFiles()
+        {
+            string fileDir = _dataManager.CreateOutputDirectory("Alignments");
+            foreach (KeyValuePair<string, AlignmentData> alignments in _dataManager.Alignments)
+            {
+                _dataManager.MoveFile(alignments.Value.FileLocation, fileDir);
+            }
+        }
+        private void writeOrfsFound()
+        {
+            string fileDir = _dataManager.CreateOutputDirectory("Orfs");
+            foreach(KeyValuePair<string, SequenceData> sequenceOrfPair in _dataManager.SequencesUsed)
+            {
+                StreamWriter writer = new StreamWriter(fileDir + sequenceOrfPair.Key + ".csv");
+                writer.Write(sequenceOrfPair.Key + "\n");
+                bool writeValues = false;
+                for(int i = 0; i < sequenceOrfPair.Value.OtherOrfData.Count; i++)
+                {
+                    if(!writeValues) writer.Write("Orf" + i + ",");
+                    else writer.Write(sequenceOrfPair.Value.OtherOrfData["orf" + (i + 1)].StartLocationN + "->" +
+                                      sequenceOrfPair.Value.OtherOrfData["orf" + (i + 1)].EndLocationN + ",");
+                    if (((i+1) % orfsPerLine) == 0)
+                    {
+                        if (!writeValues) i -= 10;
+                        writeValues = !writeValues;
+                        writer.Write("\n\n");
+                    }
+                }
+                writer.Close();
+            }
+        }
         private void writeSiteChanges()
         {
             string fileDir = _dataManager.CreateOutputDirectory("DiffenceLocations");

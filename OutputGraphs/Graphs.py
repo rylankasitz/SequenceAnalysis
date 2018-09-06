@@ -76,8 +76,11 @@ def CreateRecombinationGraph(inputData, colors):
         for i, bp in enumerate(recombData):
             if not ("nonbp" + str(i)) in bpsdata:
                 bpsdata["nonbp" + str(i)] = {}
+            if not ("bp" + str(i)) in bpsdata:
                 bpsdata["bp" + str(i)] = {}
+            if not ("nonbp" + str(i)) in bpsPoints:
                 bpsPoints["nonbp" + str(i)] = {}
+            if not ("bp" + str(i)) in bpsPoints:
                 bpsPoints["bp" + str(i)] = {}
             bpsdata["nonbp" + str(i)][seq] = bp["StartSite"] - lastSite
             bpsdata["bp" + str(i)][seq] = bp["EndSite"] - bp["StartSite"]
@@ -102,7 +105,6 @@ def CreatePhyloGeneticTree(inputfile, outputfile, size):
     try:
         data = f.readlines()[0]
         f.close()
-
         tree = Tree(data)
         tree.set_outgroup(tree.get_midpoint_outgroup())
         ts = TreeStyle()
@@ -113,3 +115,32 @@ def CreatePhyloGeneticTree(inputfile, outputfile, size):
         t = tree.render(str(outputfile), w=size, units="px", tree_style=ts)
     except:
         print "Can't read " + inputfile
+
+
+# Html Output
+def addRow(height):
+    return '''<div class="row" stylesheet="height: ''' + height + ''';">'''
+
+def endRow():
+    return '''</div>'''
+
+def addCol(width):
+    return '''<div class="col" stylesheet="width: ''' + width + ''';">'''
+
+def endCol():
+    return '''</div>'''
+
+def CreateHtmlPlotString(src, title="", width=800, height=800):
+    string = '''<!-- *** Section 1 *** --->
+                <h2>''' + title + '''</h2>
+                <center><iframe width="''' + str(width) + '''" height="''' + str(height) + '''" frameborder="0" seamless="seamless" \
+                src="''' + src + '''""></iframe></center>'''
+    return string
+
+def InitalizeHtmlString():
+    return '''<html><head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+                    <style>body{ margin:0 100; background:whitesmoke; } 
+                            iframe{ float: left}</style></head><body>'''
+
+def EndHtmlString():
+    return  '''</body></html>'''

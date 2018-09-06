@@ -20,10 +20,10 @@ namespace PRRSAnalysis
             Application.SetCompatibleTextRenderingDefault(false);
 
             DataManager dataManager = new DataManager();
-            ComponentPool analysisPool = new ComponentPool(dataManager);
-            UserInterface userInterface = new UserInterface(dataManager, analysisPool.RunAnalysis);
-
+            dataManager.LoadData();
             dataManager.DeserializeJsonFiles();
+            ComponentPool analysisPool = new ComponentPool(dataManager);
+            UserInterface userInterface = new UserInterface(dataManager, analysisPool.RunAnalysis);        
 
             Application.Run(userInterface);
         }

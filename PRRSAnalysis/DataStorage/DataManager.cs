@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using PRRSAnalysis.Properties;
 
 namespace PRRSAnalysis.DataStorage
 {
@@ -70,6 +71,9 @@ namespace PRRSAnalysis.DataStorage
         /// Minimun length a found orf can be
         /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
+        /// <summary>
+        /// 
+        /// </summary>
         public List<List<string>> CombinedOrfs { get; set; } = new List<List<string>>()
         {
             new List<string>()
@@ -167,28 +171,6 @@ namespace PRRSAnalysis.DataStorage
                 }
             }
         }
-        public void AddLoadedSeqeunce(string name)
-        {
-            SequenceData sequenceData;
-            if(SequencesLoaded.TryGetValue(name, out sequenceData)) {
-                SequencesUsed.Add(name, sequenceData);
-            }
-            else
-            {
-                throw new Exception("Cannot find sequence " + name + " in loaded sequence files");
-            }
-        }
-        public void RemoveLoadedSequence(string name)
-        {
-            if (SequencesUsed.ContainsKey(name))
-            {
-                SequencesUsed.Remove(name);
-            }
-            else
-            {
-                throw new Exception("Connot find sequence " + name + " to remove");
-            }
-        }
         public void CreateOneSequenceFile(string name, bool orfFile = false)
         {
             try
@@ -239,7 +221,6 @@ namespace PRRSAnalysis.DataStorage
         public void DeserializeJsonFiles()
         {
             AminoAcidChart = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(File.ReadAllText(OrfTempateFolder + "AminoAcidTemplate.json"));
-
             OrfTemplates = JsonConvert.DeserializeObject<Dictionary<string, OrfsTemplate>>(File.ReadAllText(OrfTempateFolder + "PRRS_Orf_Template.json"));
         }
         public string CreateOutputDirectory(string name)
@@ -256,8 +237,36 @@ namespace PRRSAnalysis.DataStorage
             }
             return OutputFolder + name + "\\";
         }
+        public void MoveFile(string src, string dest)
+        {
+            try
+            {
+                string fileName = Path.GetFileName(src);
+                string destFile = Path.Combine(dest, fileName);
+                File.Copy(src, destFile, true);
+            }
+            catch
+            {
+                throw new Exception("Unable to move file " + src + " to " + dest);
+            }
+        }
 
         #endregion
 
+        public void SaveData()
+        {
+            Settings.Default.VaccineLocation = VaccineLocation;
+            Settings.Default.MafftSettings = MafftSettings;
+            Settings.Default.MinimumOrfLength = MinimumOrfLength;
+            Settings.Default.RunReverseFrames = RunReverseFrames;
+            Settings.Default.Save();
+        }
+        public void LoadData()
+        {
+            VaccineLocation = Settings.Default.VaccineLocation;
+            MafftSettings = Settings.Default.MafftSettings;
+            MinimumOrfLength = Settings.Default.MinimumOrfLength;
+            RunReverseFrames = Settings.Default.RunReverseFrames;
+        }
     }
 }
