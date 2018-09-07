@@ -28,12 +28,16 @@ namespace PRRSAnalysis.DataStorage
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
         public float OrfLengthThreshold { get; set; } = .1f;
-        public float OrfIdentifierPIThreshold { get; set; } = 0;
+        public float OrfIdentifierPIThreshold { get; set; } = 10;
 
         #endregion
 
         #region Analysis Data
 
+        public int SequenceCount { get; set; } = 0;
+        public int AnalysisCount { get; set; } = 0;
+        public bool IsRunning { get; set; } = false;
+        public int ProgressBarValue { get; set; } = 0;
         public Dictionary<string, SequenceData> SequencesUsed { get; set; } = new Dictionary<string, SequenceData>();
         public Dictionary<string, SequenceData> SequencesLoaded { get; set; } = new Dictionary<string, SequenceData>();
         public List<string> AnalysisNames { get; set; } = new List<string>();
@@ -253,6 +257,8 @@ namespace PRRSAnalysis.DataStorage
 
         #endregion
 
+        #region Data Saving
+
         public void SaveData()
         {
             Settings.Default.VaccineLocation = VaccineLocation;
@@ -268,5 +274,7 @@ namespace PRRSAnalysis.DataStorage
             MinimumOrfLength = Settings.Default.MinimumOrfLength;
             RunReverseFrames = Settings.Default.RunReverseFrames;
         }
+
+        #endregion
     }
 }

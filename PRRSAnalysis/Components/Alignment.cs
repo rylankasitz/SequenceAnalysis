@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PRRSAnalysis.ComponentLayouts;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Components
 {
@@ -21,7 +22,7 @@ namespace PRRSAnalysis.Components
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }
-        public override void Run(string name)
+        public override void Run(string name, UpdateProgressBar updateProgressBar)
         {         
             bool isOrfFile = false;
             if (name != "Wholegenome") isOrfFile = true;
@@ -35,6 +36,8 @@ namespace PRRSAnalysis.Components
             _dataManager.Alignments.Add(name, new AlignmentData());
             _dataManager.Alignments[name].Contents = _dataManager.FileToSequences(outfile);
             _dataManager.Alignments[name].FileLocation = outfile;
+
+            updateProgressBar((int)(400 / (float)_dataManager.AnalysisCount));
         }
         private string getArgs()
         {

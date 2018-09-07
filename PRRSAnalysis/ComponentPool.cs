@@ -10,8 +10,9 @@ using System.Threading;
 using System.Collections;
 using PRRSAnalysis.Output;
 using PRRSAnalysis.Components;
+using System.Windows.Forms;
 
-public delegate void RunDelegate();
+public delegate void RunDelegate(UpdateProgressBar updateProgressBar);
 
 namespace PRRSAnalysis
 {
@@ -23,6 +24,7 @@ namespace PRRSAnalysis
         private IEnumerable<SequenceLoop> _sequenceLoop;
         private IEnumerable<SingleLoop> _singleLoops;
         private DataManager _dataManager;
+        private UpdateProgressBar _updateProgressBar;
 
         public ComponentPool(DataManager dataManager)
         {
@@ -46,30 +48,35 @@ namespace PRRSAnalysis
             return objects;
         }
 
-        public void Run()
+        public void Run(UpdateProgressBar updateProgressBar)
         {
-            new Thread(() =>
+            _updateProgressBar = updateProgressBar;
+            Thread thread = new Thread(new ThreadStart(ThreadProc));
+            thread.Start();
+        }
+        public void ThreadProc()
+        {
+            _dataManager.SequenceCount = _dataManager.SequencesUsed.Count;
+            foreach (SequenceLoop component in _sequenceLoop)
             {
-                Thread.CurrentThread.IsBackground = true;           
-                foreach (SequenceLoop component in _sequenceLoop)
+                foreach (string sequence in _dataManager.SequencesUsed.Keys)
                 {
-                    foreach (string sequence in _dataManager.SequencesUsed.Keys)
-                    {
-                        component.Run(sequence);
-                    }
+                    component.Run(sequence, _updateProgressBar);
                 }
-                foreach (AnalysisLoop component in _analysisComponents)
+            }
+            _dataManager.AnalysisCount = _dataManager.AnalysisNames.Count;
+            foreach (AnalysisLoop component in _analysisComponents)
+            {
+                foreach (string analysisName in _dataManager.AnalysisNames)
                 {
-                    foreach(string analysisName in _dataManager.AnalysisNames)
-                    {
-                        component.Run(analysisName);
-                    }     
+                    component.Run(analysisName, _updateProgressBar);
                 }
-                foreach(SingleLoop singleLoop in _singleLoops)
-                {
-                    singleLoop.Run();
-                }
-            }).Start();
+            }
+            foreach (SingleLoop singleLoop in _singleLoops)
+            {
+                singleLoop.Run(_updateProgressBar);
+            }
+            MessageBox.Show("Analysis Finished");
         }
     }
 }

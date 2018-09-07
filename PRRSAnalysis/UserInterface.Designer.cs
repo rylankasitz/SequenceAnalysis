@@ -54,6 +54,7 @@
             this.uxVaccineLocationLabel = new System.Windows.Forms.Label();
             this.uxVaccineLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxVaccineLocationButton = new System.Windows.Forms.Button();
+            this.uxProgressBar = new System.Windows.Forms.ProgressBar();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -274,11 +275,20 @@
             this.uxVaccineLocationButton.UseVisualStyleBackColor = true;
             this.uxVaccineLocationButton.Click += new System.EventHandler(this.uxVaccineLocationButton_Click);
             // 
+            // uxProgressBar
+            // 
+            this.uxProgressBar.Location = new System.Drawing.Point(252, 415);
+            this.uxProgressBar.Maximum = 1000;
+            this.uxProgressBar.Name = "uxProgressBar";
+            this.uxProgressBar.Size = new System.Drawing.Size(332, 23);
+            this.uxProgressBar.TabIndex = 15;
+            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 450);
+            this.Controls.Add(this.uxProgressBar);
             this.Controls.Add(this.uxVaccineLocationButton);
             this.Controls.Add(this.uxVaccineLocationTextBox);
             this.Controls.Add(this.uxVaccineLocationLabel);
@@ -329,6 +339,7 @@
         private System.Windows.Forms.Label uxVaccineLocationLabel;
         private System.Windows.Forms.TextBox uxVaccineLocationTextBox;
         private System.Windows.Forms.Button uxVaccineLocationButton;
+        public System.Windows.Forms.ProgressBar uxProgressBar;
     }
 }
 

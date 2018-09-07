@@ -9,6 +9,7 @@ using PRRSAnalysis.DataStorage;
 using System.IO;
 using PRRSAnalysis.AnalysisHelpers;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Output
 {
@@ -27,12 +28,17 @@ namespace PRRSAnalysis.Output
             _commandlineRun = new CommandlineRun();
         }
 
-        public override void Run()
+        public override void Run(UpdateProgressBar updateProgressBar)
         {
             // Write Data
             moveAlignmentFiles();
             writeSiteChanges();
-            writeOrfsFound();
+            string fileDir = _dataManager.CreateOutputDirectory("UnknownOrfs");
+            foreach (KeyValuePair<string, SequenceData> sequenceOrfPair in _dataManager.SequencesUsed)
+                writeOrfsFound(fileDir + sequenceOrfPair.Key + ".csv", sequenceOrfPair.Value.OtherOrfData);
+            fileDir = _dataManager.CreateOutputDirectory("KnownOrfs");
+            foreach (KeyValuePair<string, SequenceData> sequenceOrfPair in _dataManager.SequencesUsed)
+                writeOrfsFound(fileDir + sequenceOrfPair.Key + ".csv", sequenceOrfPair.Value.KnownOrfData);
 
             // Graph Stuff
             _dataManager.WriteJsonFile(_dataManager.SequencesUsed, "Sequences");
@@ -43,6 +49,8 @@ namespace PRRSAnalysis.Output
             _commandlineRun.ProgramName = "BuildGraphs.exe";
             _commandlineRun.Arguments = "\"" + Path.GetFullPath(_dataManager.DataFolder) + "\"";
             _commandlineRun.Run();
+
+            updateProgressBar(1000);
         }
 
         #region Output Methods
@@ -55,28 +63,14 @@ namespace PRRSAnalysis.Output
                 _dataManager.MoveFile(alignments.Value.FileLocation, fileDir);
             }
         }
-        private void writeOrfsFound()
-        {
-            string fileDir = _dataManager.CreateOutputDirectory("Orfs");
-            foreach(KeyValuePair<string, SequenceData> sequenceOrfPair in _dataManager.SequencesUsed)
+        private void writeOrfsFound(string filedir, Dictionary<string, OrfData> sequenceOrfPair)
+        {   
+            StreamWriter writer = new StreamWriter(filedir);
+            foreach(KeyValuePair<string, OrfData> orfDataPair in sequenceOrfPair)
             {
-                StreamWriter writer = new StreamWriter(fileDir + sequenceOrfPair.Key + ".csv");
-                writer.Write(sequenceOrfPair.Key + "\n");
-                bool writeValues = false;
-                for(int i = 0; i < sequenceOrfPair.Value.OtherOrfData.Count; i++)
-                {
-                    if(!writeValues) writer.Write("Orf" + i + ",");
-                    else writer.Write(sequenceOrfPair.Value.OtherOrfData["orf" + (i + 1)].StartLocationN + "->" +
-                                      sequenceOrfPair.Value.OtherOrfData["orf" + (i + 1)].EndLocationN + ",");
-                    if (((i+1) % orfsPerLine) == 0)
-                    {
-                        if (!writeValues) i -= 10;
-                        writeValues = !writeValues;
-                        writer.Write("\n\n");
-                    }
-                }
-                writer.Close();
+                writer.Write(orfDataPair.Value.Name + "," + orfDataPair.Value.StartLocationN + "," + orfDataPair.Value.EndLocationN + "\n");
             }
+            writer.Close();
         }
         private void writeSiteChanges()
         {

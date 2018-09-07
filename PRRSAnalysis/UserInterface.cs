@@ -10,12 +10,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PRRSAnalysis.DataStorage;
 
+public delegate void UpdateProgressBar(int val);
+
 namespace PRRSAnalysis
 {
     public partial class UserInterface : Form
     {
         private DataManager _dataManager;
         private RunDelegate _runAnalysis;
+        private UpdateProgressBar _updateProgressBar;
 
         public UserInterface(DataManager dataManager, RunDelegate run)
         {
@@ -23,6 +26,7 @@ namespace PRRSAnalysis
 
             _dataManager = dataManager;
             _runAnalysis = run;
+            _updateProgressBar = new UpdateProgressBar(updateProgressBar);
 
             uxSequenceList.ItemCheck += uxSequenceListItem_Click;
             uxVaccineLocationTextBox.Text = _dataManager.VaccineLocation;
@@ -30,17 +34,31 @@ namespace PRRSAnalysis
             uxAlignmentType.SelectedItem = _dataManager.MafftSettings;
             uxRunReverseReadsCB.Checked = _dataManager.RunReverseFrames;
         }
+
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            //base.OnFormClosing(e);
             _dataManager.SaveData();
         }
 
         private void uxRunFullAnalysis_Click(object sender, EventArgs e)
         {
+            uxProgressBar.Value = 0;
             _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
-            _runAnalysis();
-            MessageBox.Show("Analysis is Finished");
+            _runAnalysis(_updateProgressBar);
+        }
+
+        private void updateProgressBar(int val)
+        {
+            if (uxProgressBar.InvokeRequired)
+            {
+                UpdateProgressBar d = new UpdateProgressBar(updateProgressBar);
+                Invoke(d, new object[] { val });
+            }
+            else
+            {
+                if (uxProgressBar.Value + val > uxProgressBar.Maximum) uxProgressBar.Value = uxProgressBar.Maximum;
+                else uxProgressBar.Value += val;
+            }
         }
 
         #region File Menu Methods
@@ -123,10 +141,18 @@ namespace PRRSAnalysis
 
         private void updateSequenceList()
         {
+            uxSequenceList.Items.Clear();
             foreach(SequenceData sequenceData in _dataManager.SequencesLoaded.Values)
             {
-                if(!sequenceData.Vaccine)
-                    uxSequenceList.Items.Add(sequenceData.Name); 
+                if (!sequenceData.Vaccine)
+                {
+                    uxSequenceList.Items.Add(sequenceData.Name);
+                }
+            }
+            for(int i = 0; i < uxSequenceList.Items.Count; i++)
+            {
+                uxSequenceList.SelectedItem = uxSequenceList.Items[i];
+                uxSequenceList.SetItemChecked(i, true);
             }
         }
 

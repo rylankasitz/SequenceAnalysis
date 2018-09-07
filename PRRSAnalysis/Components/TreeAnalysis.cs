@@ -7,6 +7,7 @@ using PRRSAnalysis.ComponentLayouts;
 using PRRSAnalysis.DataStorage;
 using PRRSAnalysis.AnalysisHelpers;
 using System.IO;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Components
 {
@@ -21,7 +22,7 @@ namespace PRRSAnalysis.Components
             _commandlineRun = new CommandlineRun();
         }
 
-        public override void Run(string analysisItem)
+        public override void Run(string analysisItem, UpdateProgressBar updateProgressBar)
         {
             if (analysisItem.Split('_')[analysisItem.Split('_').Length - 1] != "aa")
             {
@@ -36,6 +37,8 @@ namespace PRRSAnalysis.Components
                 }
                 _dataManager.TreeData[analysisItem].NewickFile = Path.GetFullPath(infile + "_phyml_tree.txt");
             }
+
+            updateProgressBar((int)(350 / (float)_dataManager.AnalysisCount));
         }
     }
 }

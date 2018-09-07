@@ -7,6 +7,7 @@ using PRRSAnalysis.ComponentLayouts;
 using PRRSAnalysis.DataStorage;
 using PRRSAnalysis.AnalysisHelpers;
 using System.IO;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Components
 {
@@ -20,13 +21,15 @@ namespace PRRSAnalysis.Components
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }
-        public override void Run()
+        public override void Run(UpdateProgressBar updateProgressBar)
         {
             _commandlineRun.AplicationPath = _dataManager.RDPLocation + "\\";
             _commandlineRun.ProgramName = "rdp4.exe";
             _commandlineRun.Arguments = "-f" + new FileInfo(_dataManager.Alignments["Wholegenome"].FileLocation).FullName;
             _commandlineRun.Run();
             AddData();
+
+            updateProgressBar(30);
         }
         private void AddData()
         {

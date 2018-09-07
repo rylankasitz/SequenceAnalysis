@@ -9,34 +9,43 @@ using PRRSAnalysis.AnalysisHelpers;
 using System.Collections.Specialized;
 using System.IO;
 using Newtonsoft.Json;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Components
 {
     public class OrfFinder : SequenceLoop
     {
         private DataManager _dataManager;
+        private List<string> _currentSeqs;
 
         public OrfFinder(DataManager dataManager)
         {
             Priority = 1;
             _dataManager = dataManager;
+            _currentSeqs = new List<string>();
         }
 
-        public override void Run(string sequenceName)
+        public override void Run(string sequenceName, UpdateProgressBar updateProgressBar)
         {
+            _currentSeqs.Add(sequenceName);
             string contents = _dataManager.SequencesUsed[sequenceName].Contents;
 
             Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
             addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
 
             _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
-            foreach(List<string> orfs in _dataManager.CombinedOrfs)
+            matchOrfs(sequenceName);
+            foreach (List<string> orfs in _dataManager.CombinedOrfs)
             {
                 //try {
-                    createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
-            //}
+                    //createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
+                //}
                 //catch { throw new Exception("Orfs do not exist for combined orf file"); }
-            }         
+            }
+
+            updateProgressBar((int) (70 / (float) _dataManager.SequenceCount));
+
+            _dataManager.WriteJsonFile(_dataManager.SequencesUsed[sequenceName].KnownOrfData, sequenceName + "_orfs"); // temp
         }
 
         /// <summary>
@@ -100,7 +109,7 @@ namespace PRRSAnalysis.Components
                         int previousEnd = 0;
                         foreach(int startPosition in startCondonPair.Value)
                         {
-                            if (startPosition > previousEnd)
+                            if (startPosition >= previousEnd)
                             {
                                 int remove = 0;
                                 foreach (int stopPosition in stopCodonPair.Value)
@@ -166,6 +175,7 @@ namespace PRRSAnalysis.Components
                     }
                     if (found) {
                         knownOrfs.Add(orfTemplate.Name, highestOrf.Value);
+                        knownOrfs[orfTemplate.Name].Name = orfTemplate.Name;
                         if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_n"))
                             _dataManager.AnalysisNames.Add(orfTemplate.Name + "_n");
                         if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_aa"))
@@ -175,6 +185,39 @@ namespace PRRSAnalysis.Components
             }
 
             return knownOrfs;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="contents"></param>
+        /// <param name="sequencename"></param>
+        private void matchOrfs(string sequence)
+        {
+            List<string> unsharedOrfs = new List<string>();
+            string firstKey = _dataManager.SequencesUsed.Keys.First();
+            foreach(KeyValuePair<string, OrfData> orfPair in _dataManager.SequencesUsed[sequence].KnownOrfData)
+            {
+                int totalMatched = 0;
+                foreach(string seq in _currentSeqs)
+                {
+                    if (_dataManager.SequencesUsed[seq].KnownOrfData.ContainsKey(orfPair.Key)) totalMatched++;
+                }
+                if (totalMatched != _currentSeqs.Count) unsharedOrfs.Add(orfPair.Key);
+            }
+            foreach(string orf in unsharedOrfs)
+            {
+                foreach (string seq in _currentSeqs)
+                {
+                    if (_dataManager.SequencesUsed[seq].KnownOrfData.ContainsKey(orf))
+                    {
+                        _dataManager.SequencesUsed[seq].KnownOrfData.Remove(orf);
+                        _dataManager.AnalysisNames.Remove(orf + "_n");
+                        _dataManager.AnalysisNames.Remove(orf + "_a");
+                    }
+                }
+            }
         }
 
         /// <summary>

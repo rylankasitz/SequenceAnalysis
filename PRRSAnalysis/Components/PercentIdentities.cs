@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PRRSAnalysis.DataStorage;
 using PRRSAnalysis.ComponentLayouts;
 using PRRSAnalysis.AnalysisHelpers;
+using System.Windows.Forms;
 
 namespace PRRSAnalysis.Components
 {
@@ -18,7 +19,7 @@ namespace PRRSAnalysis.Components
             _dataManager = dataManager;
         }
 
-        public override void Run(string analysisName)
+        public override void Run(string analysisName, UpdateProgressBar updateProgressBar)
         {
             _dataManager.PercentIdentities[analysisName] = new PercentIdentityData();
             foreach (KeyValuePair<string, string> sequence1 in _dataManager.Alignments[analysisName].Contents)
@@ -45,6 +46,8 @@ namespace PRRSAnalysis.Components
                 _dataManager.PercentIdentities[analysisName].SiteChanges[sequence1.Key] = siteChanges;
                 _dataManager.PercentIdentities[analysisName].Data.Add(dataList);
             }
+
+            updateProgressBar((int) (20 / (float) _dataManager.AnalysisCount));
         }
     }
 }
