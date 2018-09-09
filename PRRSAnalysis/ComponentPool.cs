@@ -28,7 +28,7 @@ namespace PRRSAnalysis
 
         public ComponentPool(DataManager dataManager)
         {
-            RunAnalysis = new RunDelegate(Run);
+            RunAnalysis = new RunDelegate(Run);  
             _analysisComponents = GetEnumerableOfType<AnalysisLoop>(dataManager).OrderBy(s => s.Priority);
             _sequenceLoop = GetEnumerableOfType<SequenceLoop>(dataManager).OrderBy(s => s.Priority);
             _singleLoops = GetEnumerableOfType<SingleLoop>(dataManager).OrderBy(s => s.Priority);
@@ -56,27 +56,35 @@ namespace PRRSAnalysis
         }
         public void ThreadProc()
         {
-            _dataManager.SequenceCount = _dataManager.SequencesUsed.Count;
-            foreach (SequenceLoop component in _sequenceLoop)
+            try
             {
-                foreach (string sequence in _dataManager.SequencesUsed.Keys)
+                _dataManager.SequenceCount = _dataManager.SequencesUsed.Count;
+                foreach (SequenceLoop component in _sequenceLoop)
                 {
-                    component.Run(sequence, _updateProgressBar);
+                    component.OnRunStart();
+                    foreach (string sequence in _dataManager.SequencesUsed.Keys)
+                    {
+                        component.Run(sequence, _updateProgressBar);
+                    }
                 }
-            }
-            _dataManager.AnalysisCount = _dataManager.AnalysisNames.Count;
-            foreach (AnalysisLoop component in _analysisComponents)
-            {
-                foreach (string analysisName in _dataManager.AnalysisNames)
+                _dataManager.AnalysisCount = _dataManager.AnalysisNames.Count;
+                foreach (AnalysisLoop component in _analysisComponents)
                 {
-                    component.Run(analysisName, _updateProgressBar);
+                    foreach (string analysisName in _dataManager.AnalysisNames)
+                    {
+                        component.Run(analysisName, _updateProgressBar);
+                    }
                 }
+                foreach (SingleLoop singleLoop in _singleLoops)
+                {
+                    singleLoop.Run(_updateProgressBar);
+                }
+                MessageBox.Show("Analysis Finished");
             }
-            foreach (SingleLoop singleLoop in _singleLoops)
+            catch(Exception e)
             {
-                singleLoop.Run(_updateProgressBar);
+                MessageBox.Show("Analysis Failed: " + e.ToString());
             }
-            MessageBox.Show("Analysis Finished");
         }
     }
 }

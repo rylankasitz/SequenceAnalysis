@@ -15,7 +15,6 @@ namespace PRRSAnalysis.Output
 {
     public class OutputManager : SingleLoop
     {
-        private int orfsPerLine;
         private DataManager _dataManager;
         private CommandlineRun _commandlineRun;
        
@@ -23,7 +22,6 @@ namespace PRRSAnalysis.Output
         {
             Priority = 4;
 
-            orfsPerLine = 10;
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }
@@ -31,6 +29,7 @@ namespace PRRSAnalysis.Output
         public override void Run(UpdateProgressBar updateProgressBar)
         {
             // Write Data
+            
             moveAlignmentFiles();
             writeSiteChanges();
             string fileDir = _dataManager.CreateOutputDirectory("UnknownOrfs");
@@ -64,7 +63,8 @@ namespace PRRSAnalysis.Output
             }
         }
         private void writeOrfsFound(string filedir, Dictionary<string, OrfData> sequenceOrfPair)
-        {   
+        {
+
             StreamWriter writer = new StreamWriter(filedir);
             foreach(KeyValuePair<string, OrfData> orfDataPair in sequenceOrfPair)
             {

@@ -25,6 +25,11 @@ namespace PRRSAnalysis.Components
             _currentSeqs = new List<string>();
         }
 
+        public override void OnRunStart()
+        {
+            _currentSeqs = new List<string>();
+        }
+
         public override void Run(string sequenceName, UpdateProgressBar updateProgressBar)
         {
             _currentSeqs.Add(sequenceName);
@@ -32,20 +37,18 @@ namespace PRRSAnalysis.Components
 
             Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
             addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
-
             _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
-            matchOrfs(sequenceName);
+            
             foreach (List<string> orfs in _dataManager.CombinedOrfs)
             {
-                //try {
-                    //createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
-                //}
-                //catch { throw new Exception("Orfs do not exist for combined orf file"); }
+                try {
+                    createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
+                }
+                catch { }
             }
+            matchOrfs(sequenceName);
 
             updateProgressBar((int) (70 / (float) _dataManager.SequenceCount));
-
-            _dataManager.WriteJsonFile(_dataManager.SequencesUsed[sequenceName].KnownOrfData, sequenceName + "_orfs"); // temp
         }
 
         /// <summary>
@@ -159,6 +162,18 @@ namespace PRRSAnalysis.Components
                     }
                 }
 
+                // Get hardset
+                if (orfTemplate.HardSet && potentialOrfs.ContainsKey(orfTemplate.Name))
+                {
+                    for(int i = 0; i < potentialOrfs[orfTemplate.Name].Count; i++)
+                    {
+                        potentialOrfs[orfTemplate.Name][i].StartLocationN = potentialOrfs[orfTemplate.Name][i].EndLocationN - orfTemplate.LengthAA * 3;
+                        potentialOrfs[orfTemplate.Name][i].StartLocationAA = potentialOrfs[orfTemplate.Name][i].EndLocationAA - orfTemplate.LengthAA;
+                        potentialOrfs[orfTemplate.Name][i].LengthAA = orfTemplate.LengthAA;
+                        potentialOrfs[orfTemplate.Name][i].LengthN = orfTemplate.LengthAA * 3;
+                    }
+                }
+
                 // Find closest related orf
                 bool found = false;
                 KeyValuePair<float, OrfData> highestOrf = new KeyValuePair<float, OrfData>(_dataManager.OrfIdentifierPIThreshold, new OrfData());
@@ -188,7 +203,7 @@ namespace PRRSAnalysis.Components
         }
 
         /// <summary>
-        /// 
+        /// Matches all orfs so each sequence has the same orfs
         /// </summary>
         /// <param name="data"></param>
         /// <param name="contents"></param>

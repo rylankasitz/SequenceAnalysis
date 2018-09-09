@@ -18,7 +18,5 @@ namespace PRRSAnalysis.DataStorage
         public string Sequence { get; set; }
         public int LengthAA { get; set; }
         public bool HardSet { get; set; } = false;
-        public int StartPosition { get; set; } = 0;
-        public int EndPosition { get; set; } = 0;
     }
 }

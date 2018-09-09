@@ -45,8 +45,6 @@
             this.uxSettingsLabel = new System.Windows.Forms.Label();
             this.uxMafftSettingsLabel = new System.Windows.Forms.Label();
             this.uxAlignmentType = new System.Windows.Forms.ComboBox();
-            this.uxTreeLabel = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.uxOrfDetectionLabel = new System.Windows.Forms.Label();
             this.uxMinOrfLenghtLabel = new System.Windows.Forms.Label();
             this.uxMinOrfLengthTextbox = new System.Windows.Forms.TextBox();
@@ -55,6 +53,9 @@
             this.uxVaccineLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxVaccineLocationButton = new System.Windows.Forms.Button();
             this.uxProgressBar = new System.Windows.Forms.ProgressBar();
+            this.uxOutputLocationTextBox = new System.Windows.Forms.TextBox();
+            this.uxOutputLocationButton = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +66,7 @@
             this.uxRunToolbar});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(591, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(722, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -188,27 +189,9 @@
             "Very Fast"});
             this.uxAlignmentType.Location = new System.Drawing.Point(351, 147);
             this.uxAlignmentType.Name = "uxAlignmentType";
-            this.uxAlignmentType.Size = new System.Drawing.Size(77, 21);
+            this.uxAlignmentType.Size = new System.Drawing.Size(96, 21);
             this.uxAlignmentType.TabIndex = 4;
             this.uxAlignmentType.SelectedIndexChanged += new System.EventHandler(this.uxAlignmentType_SelectedIndexChanged);
-            // 
-            // uxTreeLabel
-            // 
-            this.uxTreeLabel.AutoSize = true;
-            this.uxTreeLabel.Location = new System.Drawing.Point(249, 227);
-            this.uxTreeLabel.Name = "uxTreeLabel";
-            this.uxTreeLabel.Size = new System.Drawing.Size(92, 13);
-            this.uxTreeLabel.TabIndex = 5;
-            this.uxTreeLabel.Text = "Phylogentic Trees";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(249, 264);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(85, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "RDP4 Locations";
             // 
             // uxOrfDetectionLabel
             // 
@@ -222,7 +205,7 @@
             // uxMinOrfLenghtLabel
             // 
             this.uxMinOrfLenghtLabel.AutoSize = true;
-            this.uxMinOrfLenghtLabel.Location = new System.Drawing.Point(259, 115);
+            this.uxMinOrfLenghtLabel.Location = new System.Drawing.Point(259, 112);
             this.uxMinOrfLenghtLabel.Name = "uxMinOrfLenghtLabel";
             this.uxMinOrfLenghtLabel.Size = new System.Drawing.Size(105, 13);
             this.uxMinOrfLenghtLabel.TabIndex = 9;
@@ -251,7 +234,7 @@
             // uxVaccineLocationLabel
             // 
             this.uxVaccineLocationLabel.AutoSize = true;
-            this.uxVaccineLocationLabel.Location = new System.Drawing.Point(249, 188);
+            this.uxVaccineLocationLabel.Location = new System.Drawing.Point(248, 182);
             this.uxVaccineLocationLabel.Name = "uxVaccineLocationLabel";
             this.uxVaccineLocationLabel.Size = new System.Drawing.Size(101, 13);
             this.uxVaccineLocationLabel.TabIndex = 12;
@@ -259,15 +242,15 @@
             // 
             // uxVaccineLocationTextBox
             // 
-            this.uxVaccineLocationTextBox.Location = new System.Drawing.Point(351, 185);
+            this.uxVaccineLocationTextBox.Location = new System.Drawing.Point(351, 179);
             this.uxVaccineLocationTextBox.Name = "uxVaccineLocationTextBox";
-            this.uxVaccineLocationTextBox.Size = new System.Drawing.Size(201, 20);
+            this.uxVaccineLocationTextBox.Size = new System.Drawing.Size(327, 20);
             this.uxVaccineLocationTextBox.TabIndex = 13;
             this.uxVaccineLocationTextBox.TextChanged += new System.EventHandler(this.uxVaccineLocationTextBox_TextChanged);
             // 
             // uxVaccineLocationButton
             // 
-            this.uxVaccineLocationButton.Location = new System.Drawing.Point(558, 183);
+            this.uxVaccineLocationButton.Location = new System.Drawing.Point(684, 177);
             this.uxVaccineLocationButton.Name = "uxVaccineLocationButton";
             this.uxVaccineLocationButton.Size = new System.Drawing.Size(26, 23);
             this.uxVaccineLocationButton.TabIndex = 14;
@@ -280,14 +263,44 @@
             this.uxProgressBar.Location = new System.Drawing.Point(252, 415);
             this.uxProgressBar.Maximum = 1000;
             this.uxProgressBar.Name = "uxProgressBar";
-            this.uxProgressBar.Size = new System.Drawing.Size(332, 23);
+            this.uxProgressBar.Size = new System.Drawing.Size(458, 23);
             this.uxProgressBar.TabIndex = 15;
+            // 
+            // uxOutputLocationTextBox
+            // 
+            this.uxOutputLocationTextBox.Location = new System.Drawing.Point(351, 216);
+            this.uxOutputLocationTextBox.Name = "uxOutputLocationTextBox";
+            this.uxOutputLocationTextBox.Size = new System.Drawing.Size(327, 20);
+            this.uxOutputLocationTextBox.TabIndex = 16;
+            this.uxOutputLocationTextBox.TextChanged += new System.EventHandler(this.uxOutputLocationTextBox_TextChanged);
+            // 
+            // uxOutputLocationButton
+            // 
+            this.uxOutputLocationButton.Location = new System.Drawing.Point(684, 214);
+            this.uxOutputLocationButton.Name = "uxOutputLocationButton";
+            this.uxOutputLocationButton.Size = new System.Drawing.Size(26, 23);
+            this.uxOutputLocationButton.TabIndex = 17;
+            this.uxOutputLocationButton.Text = "...";
+            this.uxOutputLocationButton.UseVisualStyleBackColor = true;
+            this.uxOutputLocationButton.Click += new System.EventHandler(this.uxOutputLocationButton_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(249, 219);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 13);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Output Location";
             // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(591, 450);
+            this.ClientSize = new System.Drawing.Size(722, 450);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.uxOutputLocationButton);
+            this.Controls.Add(this.uxOutputLocationTextBox);
             this.Controls.Add(this.uxProgressBar);
             this.Controls.Add(this.uxVaccineLocationButton);
             this.Controls.Add(this.uxVaccineLocationTextBox);
@@ -296,8 +309,6 @@
             this.Controls.Add(this.uxMinOrfLengthTextbox);
             this.Controls.Add(this.uxMinOrfLenghtLabel);
             this.Controls.Add(this.uxOrfDetectionLabel);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.uxTreeLabel);
             this.Controls.Add(this.uxAlignmentType);
             this.Controls.Add(this.uxMafftSettingsLabel);
             this.Controls.Add(this.uxSettingsLabel);
@@ -330,8 +341,6 @@
         private System.Windows.Forms.Label uxSettingsLabel;
         private System.Windows.Forms.Label uxMafftSettingsLabel;
         private System.Windows.Forms.ComboBox uxAlignmentType;
-        private System.Windows.Forms.Label uxTreeLabel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label uxOrfDetectionLabel;
         private System.Windows.Forms.Label uxMinOrfLenghtLabel;
         private System.Windows.Forms.TextBox uxMinOrfLengthTextbox;
@@ -340,6 +349,9 @@
         private System.Windows.Forms.TextBox uxVaccineLocationTextBox;
         private System.Windows.Forms.Button uxVaccineLocationButton;
         public System.Windows.Forms.ProgressBar uxProgressBar;
+        private System.Windows.Forms.TextBox uxOutputLocationTextBox;
+        private System.Windows.Forms.Button uxOutputLocationButton;
+        private System.Windows.Forms.Label label1;
     }
 }
 

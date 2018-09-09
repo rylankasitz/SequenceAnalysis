@@ -37,7 +37,7 @@ namespace PRRSAnalysis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Fast")]
         public string MafftSettings {
             get {
                 return ((string)(this["MafftSettings"]));
@@ -49,7 +49,7 @@ namespace PRRSAnalysis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("75")]
         public int MinimumOrfLength {
             get {
                 return ((int)(this["MinimumOrfLength"]));
@@ -68,6 +68,18 @@ namespace PRRSAnalysis.Properties {
             }
             set {
                 this["RunReverseFrames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string OutputFolder {
+            get {
+                return ((string)(this["OutputFolder"]));
+            }
+            set {
+                this["OutputFolder"] = value;
             }
         }
     }

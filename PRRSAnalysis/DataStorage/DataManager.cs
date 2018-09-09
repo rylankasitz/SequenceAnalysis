@@ -19,7 +19,7 @@ namespace PRRSAnalysis.DataStorage
 
         public string DataFolder { get; set; } = "_TempData\\";
         public string OrfTempateFolder { get; set; } = Path.GetFullPath("_OrfTemplates\\");
-        public string OutputFolder { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\";
+        public string OutputFolder { get; set; } = "";
 
         #endregion
 
@@ -27,8 +27,8 @@ namespace PRRSAnalysis.DataStorage
 
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
-        public float OrfLengthThreshold { get; set; } = .1f;
-        public float OrfIdentifierPIThreshold { get; set; } = 10;
+        public float OrfLengthThreshold { get; set; } = .5f;
+        public float OrfIdentifierPIThreshold { get; set; } = 0;
 
         #endregion
 
@@ -36,8 +36,6 @@ namespace PRRSAnalysis.DataStorage
 
         public int SequenceCount { get; set; } = 0;
         public int AnalysisCount { get; set; } = 0;
-        public bool IsRunning { get; set; } = false;
-        public int ProgressBarValue { get; set; } = 0;
         public Dictionary<string, SequenceData> SequencesUsed { get; set; } = new Dictionary<string, SequenceData>();
         public Dictionary<string, SequenceData> SequencesLoaded { get; set; } = new Dictionary<string, SequenceData>();
         public List<string> AnalysisNames { get; set; } = new List<string>();
@@ -60,6 +58,10 @@ namespace PRRSAnalysis.DataStorage
         /// </summary>
         public string VaccineLocation { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\PRRSVaccine.fasta";
         /// <summary>
+        /// Output Location
+        /// </summary>
+        public string MainOutputFolder { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\";
+        /// <summary>
         /// Speed setting for Mafft alignment program
         /// </summary>
         public string MafftSettings { get; set; } = "Fast";
@@ -76,7 +78,7 @@ namespace PRRSAnalysis.DataStorage
         /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
         /// <summary>
-        /// 
+        /// List of Combined orfs to run analysis on
         /// </summary>
         public List<List<string>> CombinedOrfs { get; set; } = new List<List<string>>()
         {
@@ -236,7 +238,22 @@ namespace PRRSAnalysis.DataStorage
                 }
                 catch
                 {
-                    throw new Exception("Output folder does not exist");
+                    throw new Exception("Output folder" + name + " does not exist");
+                }
+            }
+            return OutputFolder + name + "\\";
+        }
+        public string CreateDirectory(string name)
+        {
+            if (!Directory.Exists(OutputFolder + name))
+            {
+                try
+                {
+                    Directory.CreateDirectory(name);
+                }
+                catch
+                {
+                    throw new Exception("Cannot create directory " + name);
                 }
             }
             return OutputFolder + name + "\\";
@@ -265,16 +282,36 @@ namespace PRRSAnalysis.DataStorage
             Settings.Default.MafftSettings = MafftSettings;
             Settings.Default.MinimumOrfLength = MinimumOrfLength;
             Settings.Default.RunReverseFrames = RunReverseFrames;
+            Settings.Default.OutputFolder = MainOutputFolder;
             Settings.Default.Save();
         }
         public void LoadData()
-        {
-            VaccineLocation = Settings.Default.VaccineLocation;
+        {            
             MafftSettings = Settings.Default.MafftSettings;
             MinimumOrfLength = Settings.Default.MinimumOrfLength;
             RunReverseFrames = Settings.Default.RunReverseFrames;
+            MainOutputFolder = Settings.Default.OutputFolder;
+            VaccineLocation = Settings.Default.VaccineLocation;
+
+            if (VaccineLocation == "")
+                VaccineLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceOutput\\VaccineFiles\\" + CurrentVirusKey + ".fasta";
+            if (MainOutputFolder == "")
+                MainOutputFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceOutput\\";
+
+            CreateDirectory(MainOutputFolder);
+            CreateDirectory(Path.GetDirectoryName(VaccineLocation));
         }
 
         #endregion
+
+        public void ResetVariablesForRun()
+        {
+            AnalysisFiles = new Dictionary<string, string>();
+            AnalysisNames = new List<string>(); AnalysisNames.Add("Wholegenome");
+            Alignments = new Dictionary<string, AlignmentData>();
+            PercentIdentities = new Dictionary<string, PercentIdentityData>();
+            TreeData = new Dictionary<string, TreeData>();
+            RecombinationData = new Dictionary<string, List<RecombinationData>>();
+        }
     }
 }
