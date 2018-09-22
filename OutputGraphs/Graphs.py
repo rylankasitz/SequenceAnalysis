@@ -45,9 +45,9 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsiz
                 total += inputData[orfname]["Dic"][sequencename][sequence]
                 dist += inputData[orfname]["DicInverse"][sequencename][sequence]
         average = round(total/len(orfs), 3)
-        annotations.append(dict(x=dist + 20, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
+        annotations.append(dict(x=dist + 15, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
 
-    return data, go.Layout(title=title, barmode='stack', annotations=annotations, margin=go.Margin(l=100,r=100,b=100,t=125,pad=4)), annotations
+    return data, go.Layout(title=title, barmode='stack', height=30*len(Sequences), annotations=annotations, margin=go.Margin(l=100,r=100,b=100,t=125,pad=4)), annotations
 
 def CreateDropDown(datalist, datalen, rangeD, annotations):
     buttons = []

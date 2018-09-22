@@ -264,7 +264,7 @@
             this.uxProgressBar.Location = new System.Drawing.Point(248, 422);
             this.uxProgressBar.Maximum = 1000;
             this.uxProgressBar.Name = "uxProgressBar";
-            this.uxProgressBar.Size = new System.Drawing.Size(393, 23);
+            this.uxProgressBar.Size = new System.Drawing.Size(417, 23);
             this.uxProgressBar.TabIndex = 15;
             // 
             // uxOutputLocationTextBox
@@ -298,11 +298,11 @@
             // 
             this.uxRunTimeLabel.AutoSize = true;
             this.uxRunTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxRunTimeLabel.Location = new System.Drawing.Point(647, 425);
+            this.uxRunTimeLabel.Location = new System.Drawing.Point(671, 425);
             this.uxRunTimeLabel.Name = "uxRunTimeLabel";
-            this.uxRunTimeLabel.Size = new System.Drawing.Size(63, 16);
+            this.uxRunTimeLabel.Size = new System.Drawing.Size(39, 16);
             this.uxRunTimeLabel.TabIndex = 19;
-            this.uxRunTimeLabel.Text = "RunTime";
+            this.uxRunTimeLabel.Text = "00:00";
             // 
             // UserInterface
             // 

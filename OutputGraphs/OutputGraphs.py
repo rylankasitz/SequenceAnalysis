@@ -124,9 +124,9 @@ html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportPar
 
 # Add to html
 html_string = Graphs.InitalizeHtmlString()
-html_string += Graphs.CreateHtmlPlotString(html_orfDropdown, width='25%', height='50%')
+html_string += Graphs.CreateHtmlPlotString(html_orfDropdown, width='25%', height=len(Sequences)*30)
 for str in html_vaccinePlots:
-    html_string += Graphs.CreateHtmlPlotString(str, width='25%', height='50%')
+    html_string += Graphs.CreateHtmlPlotString(str, width='25%', height=len(Sequences)*30)
 html_string += Graphs.CreateHtmlPlotString(html_heatmap_wholegenome, width='50%', padding_top='50%')
 html_string += Graphs.CreateHtmlPlotString(html_heatmap_orf2b5a, width='50%', padding_top='50%')
 html_string += Graphs.CreateHtmlPlotString(html_recombination, width='50%')
