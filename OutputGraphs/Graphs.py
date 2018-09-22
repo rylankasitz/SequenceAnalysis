@@ -32,7 +32,7 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsiz
                 orfs.append(orfname)
                 data.append(go.Bar(y=sequences, x=HelperMethods.match(sequences, dataInverse), 
                                     text=HelperMethods.match(sequences, dataNormal),
-                                    name=name, orientation = 'h', hoverinfo='name+text', visible=visible))  
+                                    name=name, orientation = 'h', hoverinfo='name+text', visible=visible))
                 for s in sequences[:]:
                     annotationSeqs[s] = s
 
@@ -45,9 +45,12 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsiz
                 total += inputData[orfname]["Dic"][sequencename][sequence]
                 dist += inputData[orfname]["DicInverse"][sequencename][sequence]
         average = round(total/len(orfs), 3)
-        annotations.append(dict(x=dist + 15, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
+        annotations.append(dict(x=dist + 20, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
 
-    return data, go.Layout(title=title, barmode='stack', height=30*len(Sequences), annotations=annotations, margin=go.Margin(l=100,r=100,b=100,t=125,pad=4)), annotations
+    height = len(Sequences)*50
+    if height < 250:
+        height = 250
+    return data, go.Layout(title=title, showlegend=False, height=height, barmode='stack', annotations=annotations, margin=go.Margin(l=100,r=100,b=100,t=125,pad=4)), annotations
 
 def CreateDropDown(datalist, datalen, rangeD, annotations):
     buttons = []
@@ -98,11 +101,14 @@ def CreateRecombinationGraph(inputData, colors, sequencesdata, title=""):
         bpsPoints["nonbp" + str(lastIndex)][seq] = bp["SequenceLength"]
 
     # Plot data
+    height = 125*len(inputData)
+    if height < 300:
+        height = 300
     for i, key in enumerate(bpsdata.keys()):
         data.append(go.Bar(y=inputData.keys(), x=HelperMethods.match(inputData.keys(), bpsdata[key], full=True), name=labels[(i)%2], orientation = 'h',
                     text=HelperMethods.match(inputData.keys(), bpsPoints[key], full=True), marker=dict(color=colors[(i)%2]), 
                     hoverinfo='text')) 
-    return go.Figure(data=data, layout=go.Layout(title=title, barmode='stack', height=125*len(inputData), showlegend=False, margin=go.Margin(l=200,r=100,b=100,t=100,pad=4)))
+    return go.Figure(data=data, layout=go.Layout(title=title, barmode='stack', height=height, showlegend=False, margin=go.Margin(l=200,r=100,b=100,t=100,pad=4)))
 
 def CreatePhyloGeneticTree(inputfile, outputfile, size):  
     f = open(inputfile, "r")

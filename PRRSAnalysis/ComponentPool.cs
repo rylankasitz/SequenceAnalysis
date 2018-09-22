@@ -81,9 +81,8 @@ namespace PRRSAnalysis
                 {
                     singleLoop.Run(_updateProgressBar);
                 }
-                _dataManager.RunTime = DateTime.Now - startTime;
-                _updateProgressBar(1000);       
-                MessageBox.Show("Analysis Finished");              
+                _dataManager.RunTime = DateTime.Now - startTime;  
+                MessageBox.Show("Analysis Finished\n" + "Time Elapesed: " + _dataManager.RunTime.ToString());              
             }
             catch(Exception e)
             {

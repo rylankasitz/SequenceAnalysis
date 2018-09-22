@@ -66,10 +66,6 @@ namespace PRRSAnalysis
                 if (uxProgressBar.Value + val > uxProgressBar.Maximum) uxProgressBar.Value = uxProgressBar.Maximum;
                 else uxProgressBar.Value += val;
             }
-            if(uxProgressBar.Value >= uxProgressBar.Maximum)
-            {
-                uxRunTimeLabel.Text = _dataManager.RunTime.ToString();
-            }
         }
 
         #region File Menu Methods

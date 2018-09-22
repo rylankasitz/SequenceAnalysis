@@ -56,7 +56,6 @@
             this.uxOutputLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxOutputLocationButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.uxRunTimeLabel = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -261,10 +260,10 @@
             // 
             // uxProgressBar
             // 
-            this.uxProgressBar.Location = new System.Drawing.Point(248, 422);
+            this.uxProgressBar.Location = new System.Drawing.Point(252, 415);
             this.uxProgressBar.Maximum = 1000;
             this.uxProgressBar.Name = "uxProgressBar";
-            this.uxProgressBar.Size = new System.Drawing.Size(417, 23);
+            this.uxProgressBar.Size = new System.Drawing.Size(458, 23);
             this.uxProgressBar.TabIndex = 15;
             // 
             // uxOutputLocationTextBox
@@ -294,22 +293,11 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "Output Location";
             // 
-            // uxRunTimeLabel
-            // 
-            this.uxRunTimeLabel.AutoSize = true;
-            this.uxRunTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxRunTimeLabel.Location = new System.Drawing.Point(671, 425);
-            this.uxRunTimeLabel.Name = "uxRunTimeLabel";
-            this.uxRunTimeLabel.Size = new System.Drawing.Size(39, 16);
-            this.uxRunTimeLabel.TabIndex = 19;
-            this.uxRunTimeLabel.Text = "00:00";
-            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 450);
-            this.Controls.Add(this.uxRunTimeLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.uxOutputLocationButton);
             this.Controls.Add(this.uxOutputLocationTextBox);
@@ -364,7 +352,6 @@
         private System.Windows.Forms.TextBox uxOutputLocationTextBox;
         private System.Windows.Forms.Button uxOutputLocationButton;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label uxRunTimeLabel;
     }
 }
 

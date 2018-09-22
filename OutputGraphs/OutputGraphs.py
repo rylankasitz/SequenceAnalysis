@@ -27,8 +27,8 @@ args=parser.parse_args()
 DataFolder = args.i
 OutputFolder = args.out
 
-#DataFolder = r"C:\Users\rylan kasitz\source\repos\PRRSAnalysis\PRRSAnalysis\bin\Debug\_TempData" # temp
-#OutputFolder = r"C:\Users\rylan kasitz\Documents\SequenceAnalysisProgram\Output\ Test"   # temp
+DataFolder = r"C:\Users\rylan kasitz\source\repos\SequenceAnalysis\PRRSAnalysis\bin\Debug\_TempData" # temp
+OutputFolder = r"C:\Users\rylan kasitz\Documents\SequenceAnalysisProgram\Output\ Test"   # temp
 
 # Get data variables
 Sequences = HelperMethods.readJson(DataFolder + "/Sequences.json")
@@ -99,6 +99,8 @@ if(len(RecombinationData) > 0):
 size = len(Sequences)*75
 if size > 800:
     size = 800
+elif size < 600:
+    size = 600
 fig_Heatmap_Wholegenome = dict(data=[go.Heatmap(z=PercentIdentityData["Wholegenome"]["Data"], y=PercentIdentityData["Wholegenome"]["Sequences"], 
                           x=PercentIdentityData["Wholegenome"]["Sequences"], colorscale=Heatmap_Color, zmin=Heatmap_MinVal, zmax=100)],
                           layout=dict(title="Whole Genome Nucleotide Heatmap", width=size, height=size, 
@@ -123,13 +125,20 @@ html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportPar
 
 
 # Add to html
+bar_height = len(Sequences)*30
+if bar_height < 250:
+    bar_height = 250
+recomb_height = len(RecombinationData)*125
+if recomb_height < 300:
+    recomb_height = 300
+
 html_string = Graphs.InitalizeHtmlString()
-html_string += Graphs.CreateHtmlPlotString(html_orfDropdown, width='25%', height=len(Sequences)*30)
+html_string += Graphs.CreateHtmlPlotString(html_orfDropdown, width='25%', height=bar_height)
 for str in html_vaccinePlots:
-    html_string += Graphs.CreateHtmlPlotString(str, width='25%', height=len(Sequences)*30)
-html_string += Graphs.CreateHtmlPlotString(html_heatmap_wholegenome, width='50%', padding_top='50%')
-html_string += Graphs.CreateHtmlPlotString(html_heatmap_orf2b5a, width='50%', padding_top='50%')
-html_string += Graphs.CreateHtmlPlotString(html_recombination, width='50%')
+    html_string += Graphs.CreateHtmlPlotString(str, width='25%', height=bar_height)
+html_string += Graphs.CreateHtmlPlotString(html_heatmap_wholegenome, width='50%')
+html_string += Graphs.CreateHtmlPlotString(html_heatmap_orf2b5a, width='50%')
+html_string += Graphs.CreateHtmlPlotString(html_recombination, width='50%', height=recomb_height)
 html_string += Graphs.CreateImageHtmlString(OutputFolder + "\PhyloGeneticTrees\Wholegenome_tree.png", width='50%', height='auto', 
                                             title='Whole Genome Phylogenetic Tree')
 html_string += Graphs.EndHtmlString()
