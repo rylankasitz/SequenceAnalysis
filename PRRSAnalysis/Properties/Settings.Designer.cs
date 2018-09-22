@@ -82,5 +82,41 @@ namespace PRRSAnalysis.Properties {
                 this["OutputFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string RDP4 {
+            get {
+                return ((string)(this["RDP4"]));
+            }
+            set {
+                this["RDP4"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool InitialRun {
+            get {
+                return ((bool)(this["InitialRun"]));
+            }
+            set {
+                this["InitialRun"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool FilesInitialized {
+            get {
+                return ((bool)(this["FilesInitialized"]));
+            }
+            set {
+                this["FilesInitialized"] = value;
+            }
+        }
     }
 }

@@ -28,8 +28,7 @@ namespace PRRSAnalysis.Output
 
         public override void Run(UpdateProgressBar updateProgressBar)
         {
-            // Write Data
-            
+            // Write Data    
             moveAlignmentFiles();
             writeSiteChanges();
             string fileDir = _dataManager.CreateOutputDirectory("UnknownOrfs");
@@ -46,7 +45,9 @@ namespace PRRSAnalysis.Output
             _dataManager.WriteJsonFile(_dataManager.AnalysisNames, "AnalysisNames");
             _dataManager.WriteJsonFile(_dataManager.TreeData, "Trees");
             _commandlineRun.ProgramName = "BuildGraphs.exe";
-            _commandlineRun.Arguments = "\"" + Path.GetFullPath(_dataManager.DataFolder) + "\"";
+            _commandlineRun.Arguments = ("--i \"" + Path.GetDirectoryName(_dataManager.DataFolder)  + "\" --out \"" +
+                                        Path.GetDirectoryName(_dataManager.OutputFolder) + "\"");
+            Console.WriteLine(_commandlineRun.Arguments);
             _commandlineRun.Run();
 
             updateProgressBar(1000);

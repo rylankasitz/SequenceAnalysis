@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRRSAnalysis", "PRRSAnalysi
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "OutputGraphs", "OutputGraphs\OutputGraphs.pyproj", "{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{5D278DE2-BDF4-4F09-996F-A8B7C428F92E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{92C29BDD-A8CB-4A16-A644-1565ED2A0652}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1B7D1002-1342-4F0C-8FA0-C9B3F8EDCE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D278DE2-BDF4-4F09-996F-A8B7C428F92E}.Debug|Any CPU.ActiveCfg = Release
+		{5D278DE2-BDF4-4F09-996F-A8B7C428F92E}.Debug|Any CPU.Build.0 = Release
+		{5D278DE2-BDF4-4F09-996F-A8B7C428F92E}.Release|Any CPU.ActiveCfg = Release
+		{5D278DE2-BDF4-4F09-996F-A8B7C428F92E}.Release|Any CPU.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

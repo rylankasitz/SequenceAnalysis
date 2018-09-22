@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PRRSAnalysis.DataStorage;
@@ -64,6 +65,10 @@ namespace PRRSAnalysis
             {
                 if (uxProgressBar.Value + val > uxProgressBar.Maximum) uxProgressBar.Value = uxProgressBar.Maximum;
                 else uxProgressBar.Value += val;
+            }
+            if(uxProgressBar.Value >= uxProgressBar.Maximum)
+            {
+                uxRunTimeLabel.Text = _dataManager.RunTime.ToString();
             }
         }
 
@@ -221,6 +226,26 @@ namespace PRRSAnalysis
             _dataManager.OutputFolder = uxOutputLocationTextBox.Text;
         }
 
+        private void uxRdp4Textbox_TextChanged(object sender, EventArgs e)
+        {
+            _dataManager.VaccineLocation = uxVaccineLocationTextBox.Text;
+        }
+
+        private void uxRdp4Button_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (uxOpenFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    uxVaccineLocationTextBox.Text = uxOpenFileDialog.FileName;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString());
+            }
+        }
+
         #endregion
     }
 
@@ -230,14 +255,14 @@ namespace PRRSAnalysis
         {
             Form prompt = new Form()
             {
-                Width = 500,
+                Width = 200,
                 Height = 150,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 Text = caption,
                 StartPosition = FormStartPosition.CenterScreen
             };
             Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
-            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 75 };
             Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
             confirmation.Click += (sender, e) => { prompt.Close(); };
             prompt.Controls.Add(textBox);

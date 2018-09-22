@@ -56,6 +56,7 @@
             this.uxOutputLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxOutputLocationButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.uxRunTimeLabel = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -73,15 +74,15 @@
             // uxFileToolbar
             // 
             this.uxFileToolbar.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.uxFileToolbar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.uxFileToolbar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.uxFileToolbar.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openDataToolStripMenuItem,
             this.addDataToolStripMenuItem});
-            this.uxFileToolbar.Image = ((System.Drawing.Image)(resources.GetObject("uxFileToolbar.Image")));
             this.uxFileToolbar.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.uxFileToolbar.Name = "uxFileToolbar";
-            this.uxFileToolbar.Size = new System.Drawing.Size(29, 22);
+            this.uxFileToolbar.Size = new System.Drawing.Size(38, 22);
             this.uxFileToolbar.Text = "File";
+            this.uxFileToolbar.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             // 
             // openDataToolStripMenuItem
             // 
@@ -131,14 +132,14 @@
             // 
             // uxRunToolbar
             // 
-            this.uxRunToolbar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.uxRunToolbar.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.uxRunToolbar.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.uxRunFullAnalysis});
             this.uxRunToolbar.Image = ((System.Drawing.Image)(resources.GetObject("uxRunToolbar.Image")));
             this.uxRunToolbar.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.uxRunToolbar.Name = "uxRunToolbar";
-            this.uxRunToolbar.Size = new System.Drawing.Size(29, 22);
-            this.uxRunToolbar.Text = "toolStripDropDownButton1";
+            this.uxRunToolbar.Size = new System.Drawing.Size(41, 22);
+            this.uxRunToolbar.Text = "Run";
             // 
             // uxRunFullAnalysis
             // 
@@ -260,10 +261,10 @@
             // 
             // uxProgressBar
             // 
-            this.uxProgressBar.Location = new System.Drawing.Point(252, 415);
+            this.uxProgressBar.Location = new System.Drawing.Point(248, 422);
             this.uxProgressBar.Maximum = 1000;
             this.uxProgressBar.Name = "uxProgressBar";
-            this.uxProgressBar.Size = new System.Drawing.Size(458, 23);
+            this.uxProgressBar.Size = new System.Drawing.Size(393, 23);
             this.uxProgressBar.TabIndex = 15;
             // 
             // uxOutputLocationTextBox
@@ -293,11 +294,22 @@
             this.label1.TabIndex = 18;
             this.label1.Text = "Output Location";
             // 
+            // uxRunTimeLabel
+            // 
+            this.uxRunTimeLabel.AutoSize = true;
+            this.uxRunTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.uxRunTimeLabel.Location = new System.Drawing.Point(647, 425);
+            this.uxRunTimeLabel.Name = "uxRunTimeLabel";
+            this.uxRunTimeLabel.Size = new System.Drawing.Size(63, 16);
+            this.uxRunTimeLabel.TabIndex = 19;
+            this.uxRunTimeLabel.Text = "RunTime";
+            // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 450);
+            this.Controls.Add(this.uxRunTimeLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.uxOutputLocationButton);
             this.Controls.Add(this.uxOutputLocationTextBox);
@@ -352,6 +364,7 @@
         private System.Windows.Forms.TextBox uxOutputLocationTextBox;
         private System.Windows.Forms.Button uxOutputLocationButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label uxRunTimeLabel;
     }
 }
 

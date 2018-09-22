@@ -36,6 +36,7 @@ namespace PRRSAnalysis.DataStorage
 
         public int SequenceCount { get; set; } = 0;
         public int AnalysisCount { get; set; } = 0;
+        public TimeSpan RunTime { get; set; }
         public Dictionary<string, SequenceData> SequencesUsed { get; set; } = new Dictionary<string, SequenceData>();
         public Dictionary<string, SequenceData> SequencesLoaded { get; set; } = new Dictionary<string, SequenceData>();
         public List<string> AnalysisNames { get; set; } = new List<string>();
@@ -56,19 +57,27 @@ namespace PRRSAnalysis.DataStorage
         /// <summary>
         /// Location of vaccine strands to compare to
         /// </summary>
-        public string VaccineLocation { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\PRRSVaccine.fasta";
+        public string VaccineLocation { get; set; } = "";
         /// <summary>
         /// Output Location
         /// </summary>
-        public string MainOutputFolder { get; set; } = "C:\\Users\\rylan kasitz\\Documents\\TestOutput\\";
+        public string MainOutputFolder { get; set; } = "";
         /// <summary>
         /// Speed setting for Mafft alignment program
         /// </summary>
         public string MafftSettings { get; set; } = "Fast";
         /// <summary>
-        /// Location for the program RDP4
+        /// Whether or not RDP4 is installed
         /// </summary>
-        public string RDPLocation { get; set; } = "C:\\Program Files (x86)\\RDP4";
+        public bool RDP4Installed { get; set; } = false;
+        /// <summary>
+        /// Location of program RDP4
+        /// </summary>
+        public string RDPLocation { get; set; } = "";
+        /// <summary>
+        /// Whether or not file folders have been initialized
+        /// </summary>
+        public bool FilesInitialized { get; set; } = false;
         /// <summary>
         /// Whether or not to run the reverse reads to find new orfs
         /// </summary>
@@ -126,7 +135,7 @@ namespace PRRSAnalysis.DataStorage
                         }
                     }
                 }
-                catch (Exception e)
+                catch
                 {
                     throw new Exception("Was not able to read file, it might not be in proper fasta format");
                 }
@@ -283,6 +292,9 @@ namespace PRRSAnalysis.DataStorage
             Settings.Default.MinimumOrfLength = MinimumOrfLength;
             Settings.Default.RunReverseFrames = RunReverseFrames;
             Settings.Default.OutputFolder = MainOutputFolder;
+            Settings.Default.RDP4 = RDPLocation;
+            Settings.Default.InitialRun = RDP4Installed;
+            Settings.Default.FilesInitialized = FilesInitialized;
             Settings.Default.Save();
         }
         public void LoadData()
@@ -292,14 +304,16 @@ namespace PRRSAnalysis.DataStorage
             RunReverseFrames = Settings.Default.RunReverseFrames;
             MainOutputFolder = Settings.Default.OutputFolder;
             VaccineLocation = Settings.Default.VaccineLocation;
+            RDPLocation = Settings.Default.RDP4;
+            RDP4Installed = Settings.Default.InitialRun;
+            FilesInitialized = Settings.Default.FilesInitialized;
 
             if (VaccineLocation == "")
-                VaccineLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceOutput\\VaccineFiles\\" + CurrentVirusKey + ".fasta";
+                VaccineLocation = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceAnalysisProgram\\VaccineFiles\\" + CurrentVirusKey + ".fasta";
             if (MainOutputFolder == "")
-                MainOutputFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceOutput\\";
-
-            CreateDirectory(MainOutputFolder);
-            CreateDirectory(Path.GetDirectoryName(VaccineLocation));
+                MainOutputFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SequenceAnalysisProgram\\Output\\";
+            if (RDPLocation == "")
+                RDPLocation = "C:\\Program Files (x86)\\RDP4";
         }
 
         #endregion

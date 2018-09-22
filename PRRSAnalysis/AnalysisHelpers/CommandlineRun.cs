@@ -24,7 +24,7 @@ namespace PRRSAnalysis.AnalysisHelpers
             _process.StartInfo.UseShellExecute = true;
             _process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             _process.StartInfo.CreateNoWindow = false;
-            _process.EnableRaisingEvents = true;
+            _process.EnableRaisingEvents = true;      
             _process.StartInfo.FileName = "cmd.exe";
         }
 
@@ -42,7 +42,7 @@ namespace PRRSAnalysis.AnalysisHelpers
                 _process.StartInfo.Arguments = Arguments;
             }                  
             _process.Start();
-            _process.WaitForExit();
+            _process.WaitForExit();          
         }
     }
 }

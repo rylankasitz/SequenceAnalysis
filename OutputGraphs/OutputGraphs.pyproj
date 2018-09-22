@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>1b7d1002-1342-4f0c-8fa0-c9b3f8edce78</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>OutputGraphs.py</StartupFile>
+    <StartupFile>build.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

@@ -51,6 +51,7 @@ namespace PRRSAnalysis
         public void Run(UpdateProgressBar updateProgressBar)
         {
             _updateProgressBar = updateProgressBar;
+
             Thread thread = new Thread(new ThreadStart(ThreadProc));
             thread.Start();
         }
@@ -58,6 +59,7 @@ namespace PRRSAnalysis
         {
             try
             {
+                DateTime startTime = DateTime.Now;
                 _dataManager.SequenceCount = _dataManager.SequencesUsed.Count;
                 foreach (SequenceLoop component in _sequenceLoop)
                 {
@@ -79,7 +81,9 @@ namespace PRRSAnalysis
                 {
                     singleLoop.Run(_updateProgressBar);
                 }
-                MessageBox.Show("Analysis Finished");
+                _dataManager.RunTime = DateTime.Now - startTime;
+                _updateProgressBar(1000);       
+                MessageBox.Show("Analysis Finished");              
             }
             catch(Exception e)
             {

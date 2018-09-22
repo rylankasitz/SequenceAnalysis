@@ -38,7 +38,8 @@ namespace PRRSAnalysis.Components
             Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
             addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
             _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
-            
+            getRidOfRepeates(_dataManager.SequencesUsed[sequenceName].KnownOrfData);
+
             foreach (List<string> orfs in _dataManager.CombinedOrfs)
             {
                 try {
@@ -46,7 +47,7 @@ namespace PRRSAnalysis.Components
                 }
                 catch { }
             }
-            matchOrfs(sequenceName);
+            //matchOrfs(sequenceName);
 
             updateProgressBar((int) (70 / (float) _dataManager.SequenceCount));
         }
@@ -203,6 +204,37 @@ namespace PRRSAnalysis.Components
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="knownOrfs"></param>
+        private void getRidOfRepeates(Dictionary<string, OrfData> knownOrfs)
+        {
+            Dictionary<string, OrfData> knownOrfsCopy = new Dictionary<string, OrfData>(knownOrfs);
+            Dictionary<string, OrfData> knownOrfsCopy1 = new Dictionary<string, OrfData>(knownOrfs);
+            foreach (KeyValuePair<string, OrfData> orfpair in knownOrfsCopy)
+            {
+                var matches = knownOrfsCopy1.Where(pair => pair.Value.StartLocationN == orfpair.Value.StartLocationN);
+                KeyValuePair<string, OrfData> highestRelated = new KeyValuePair<string, OrfData>(orfpair.Key, orfpair.Value);
+                int templateLength = findOrfTemplate(orfpair.Key).LengthAA;
+                int lowestLenDiff = templateLength;
+                foreach (KeyValuePair<string, OrfData> matchOrfPair in matches)
+                {
+                    if(Math.Abs(highestRelated.Value.LengthAA - templateLength) < lowestLenDiff)
+                    {
+                        highestRelated = matchOrfPair;
+                    }
+                }
+                foreach (KeyValuePair<string, OrfData> matchOrfPair in matches)
+                {
+                    if (matchOrfPair.Key != highestRelated.Key)
+                    {
+                        knownOrfs.Remove(matchOrfPair.Key);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Matches all orfs so each sequence has the same orfs
         /// </summary>
         /// <param name="data"></param>
@@ -312,6 +344,14 @@ namespace PRRSAnalysis.Components
                 }
             }
             return "";
+        }
+        private OrfTemplate findOrfTemplate(string name)
+        {
+            foreach(OrfTemplate orfTemplate in _dataManager.OrfTemplates[_dataManager.CurrentVirusKey].Orfs)
+            {
+                if (orfTemplate.Name == name) return orfTemplate;
+            }
+            return null;
         }
 
         #endregion

@@ -45,7 +45,14 @@ namespace PRRSAnalysis.Components
             {
                 return "--retree 2 --maxiterate 2 ";
             }
-            return "";
+            else if(_dataManager.MafftSettings == "Accurate")
+            {
+                return "--globalpair --maxiterate 1000";
+            }
+            else
+            {              
+                return "--retree 1 --maxiterate 0";
+            }
         }
     }
 }

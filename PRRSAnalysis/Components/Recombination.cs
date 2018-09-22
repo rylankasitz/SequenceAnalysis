@@ -28,6 +28,7 @@ namespace PRRSAnalysis.Components
             _commandlineRun.Arguments = "-f" + new FileInfo(_dataManager.Alignments["Wholegenome"].FileLocation).FullName;
             _commandlineRun.Run();
             AddData();
+            sortData();
 
             updateProgressBar(30);
         }
@@ -46,11 +47,27 @@ namespace PRRSAnalysis.Components
                     RecombinationData recombinationData = new RecombinationData
                     {
                         StartSite = Convert.ToInt32(removeExtra(parts[4])),
-                        EndSite = Convert.ToInt32(removeExtra(parts[5]))
+                        EndSite = Convert.ToInt32(removeExtra(parts[5])),
+                        SequenceLength = _dataManager.SequencesUsed[sequenceName].Contents.Length
                     };
                     _dataManager.RecombinationData[sequenceName].Add(recombinationData);
                 }
                 counter++;
+            }
+        }
+        private void sortData()
+        {
+            foreach(string key in _dataManager.RecombinationData.Keys)
+            {
+                List<RecombinationData> list = new List<RecombinationData>();
+                _dataManager.RecombinationData[key].ForEach((item) => { list.Add(item);});
+                list.Sort((pair1, pair2) => pair1.StartSite.CompareTo(pair2.StartSite));
+                int i = 0;
+                foreach(RecombinationData item in list)
+                {
+                    _dataManager.RecombinationData[key][i] = item;
+                    i++;
+                }
             }
         }
         private string removeExtra(string data)
