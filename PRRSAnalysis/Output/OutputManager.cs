@@ -37,6 +37,9 @@ namespace PRRSAnalysis.Output
             fileDir = _dataManager.CreateOutputDirectory("KnownOrfs");
             foreach (KeyValuePair<string, SequenceData> sequenceOrfPair in _dataManager.SequencesUsed)
                 writeOrfsFound(fileDir + sequenceOrfPair.Key + ".csv", sequenceOrfPair.Value.KnownOrfData);
+            fileDir = _dataManager.CreateOutputDirectory("NSPData");
+            writeNSPS(fileDir + "nsplocations.csv");
+
 
             // Graph Stuff
             _dataManager.WriteJsonFile(_dataManager.SequencesUsed, "Sequences");
@@ -70,6 +73,16 @@ namespace PRRSAnalysis.Output
             foreach(KeyValuePair<string, OrfData> orfDataPair in sequenceOrfPair)
             {
                 writer.Write(orfDataPair.Value.Name + "," + orfDataPair.Value.StartLocationN + "," + orfDataPair.Value.EndLocationN + "\n");
+            }
+            writer.Close();
+        }
+        private void writeNSPS(string filedir)
+        {
+            StreamWriter writer = new StreamWriter(filedir);
+            writer.Write("Name,Start (nt), End (nt)\n");
+            foreach (KeyValuePair<string, int[]> nspPair in _dataManager.NSPLocations)
+            {
+                writer.Write(nspPair.Key + "," + nspPair.Value[0] + "," + nspPair.Value[1] + ",\n");
             }
             writer.Close();
         }

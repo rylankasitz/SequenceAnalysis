@@ -47,7 +47,7 @@ namespace PRRSAnalysis.Components
                 }
                 catch { }
             }
-            //matchOrfs(sequenceName);
+            matchOrfs(sequenceName);
 
             updateProgressBar((int) (70 / (float) _dataManager.SequenceCount));
         }

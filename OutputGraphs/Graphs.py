@@ -45,12 +45,14 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsiz
                 total += inputData[orfname]["Dic"][sequencename][sequence]
                 dist += inputData[orfname]["DicInverse"][sequencename][sequence]
         average = round(total/len(orfs), 3)
-        annotations.append(dict(x=dist + 20, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
+        annotations.append(dict(x=dist + 35, y=sequence, text=average, font=dict(size=labelsize), showarrow=False, visible=visible))
 
-    height = len(Sequences)*50
-    if height < 250:
-        height = 250
-    return data, go.Layout(title=title, showlegend=False, height=height, barmode='stack', annotations=annotations, margin=go.Margin(l=100,r=100,b=100,t=125,pad=4)), annotations
+    height = len(Sequences)*30
+    if height < 300:
+        height = 300
+    return data, go.Layout(title=title, showlegend=False, height=height, barmode='stack', annotations=annotations, 
+                           xaxis=dict(showgrid=False, showticklabels=False), margin=go.Margin(l=200,r=10,b=100,t=125,pad=4),
+                           yaxis=dict(tickangle=0)), annotations
 
 def CreateDropDown(datalist, datalen, rangeD, annotations):
     buttons = []
@@ -66,8 +68,8 @@ def CreateDropDown(datalist, datalen, rangeD, annotations):
             annotations[d][i]['visible'] = True;
         buttons.append(dict(args=[{'visible': visible}, {'annotations': annotations[d]}], label=d, method='update'))
         visible = [False]*datalen
-    return [dict(active=0, showactive=False, buttons=buttons, direction = 'down', pad = {'r': 10, 't': 10}, x = -.5, 
-                 xanchor = 'left', y = 1.2, yanchor = 'top')]
+    return [dict(active=0, showactive=False, buttons=buttons, direction = 'down', pad = {'r': 10, 't': 0}, x = 0, 
+                 xanchor = 'left', y = 1.3, yanchor = 'middle')]
 
 def CreateRecombinationGraph(inputData, colors, sequencesdata, title=""):
     bpsdata = OrderedDict()
@@ -137,23 +139,25 @@ def addCol(width):
 def endCol():
     return '''</div>'''
 
-def CreateHtmlPlotString(src, title="", width=800, height=800, padding_top=0):    
+def CreateHtmlPlotString(src, title="", width=0, height=0, padding_top=0, min_width=380):    
     src = src.replace(r"file://", "")
     content = open(src, 'r').read().replace("'", '"')
     content = "'" + content[:12] + '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>' + content[12:] + "'"
-    string = '''<center><iframe width="''' + str(width) + '''" height="''' + str(height) + '''" padding-top="''' + str(padding_top) + '''" 
-                          frameborder="0" seamless="seamless" scrolling="no" srcdoc=''' + content + '''></iframe></center>'''
+    string = '''<iframe width="''' + str(width) + '''" height="''' + str(height) + '''" padding-top="''' + str(padding_top) + '''" 
+                          frameborder="0" seamless="seamless" scrolling="no" srcdoc=''' + content + ''' 
+                          style="min-width:''' + str(min_width) +''';"></iframe>'''
     return string
 
-def CreateImageHtmlString(location, width='auto', height='auto', title=""):
+def CreateImageHtmlString(location, width='auto', height='auto', title="", min_width=500):
     encoded = base64.b64encode(open(location, "rb").read())
-    return '''<div width="''' + str(width) + '''" height="''' + str(height) + '''">
-                <h4>''' + title + '''</h4>
+    return '''<div width="''' + str(width) + '''" height="''' + str(height) + '''"
+                style="min-width:''' + str(min_width) +''';">
+                <center style="float:left;"><h4>''' + title + '''</h4></center>
                 <img src="data:image/png;base64, ''' + encoded + '''"/></div>'''
 
 def InitalizeHtmlString():
     return '''<html><head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-                          <style>body{ margin:0 50; } iframe{ float: left; overflow:hidden; } img{ float: left; padding: 75 }</style></head><body>'''
+                          <style>body{ margin:0 50; } iframe{ float: left;  overflow:hidden; } img{ float: left; padding: 75 }</style></head><body>'''
 
 def EndHtmlString():
     return  '''</body></html>'''

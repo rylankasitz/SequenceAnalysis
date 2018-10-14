@@ -13,7 +13,7 @@ using PRRSAnalysis.Properties;
 namespace PRRSAnalysis.DataStorage
 {
     public class DataManager
-    {  
+    {
 
         #region FileLocations
 
@@ -27,8 +27,9 @@ namespace PRRSAnalysis.DataStorage
 
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
-        public float OrfLengthThreshold { get; set; } = .5f;
+        public float OrfLengthThreshold { get; set; } = .25f;
         public float OrfIdentifierPIThreshold { get; set; } = 0;
+        public Dictionary<string, NSPTemplate> NSPTemplate { get; set; }
 
         #endregion
 
@@ -45,6 +46,7 @@ namespace PRRSAnalysis.DataStorage
         public Dictionary<string, PercentIdentityData> PercentIdentities { get; set; } = new Dictionary<string, PercentIdentityData>();
         public Dictionary<string, TreeData> TreeData { get; set; } = new Dictionary<string, TreeData>();
         public Dictionary<string, List<RecombinationData>> RecombinationData { get; set; } = new Dictionary<string, List<RecombinationData>>();
+        public Dictionary<string, int[]> NSPLocations { get; set; } = new Dictionary<string, int[]>();
 
         #endregion
 
@@ -87,6 +89,10 @@ namespace PRRSAnalysis.DataStorage
         /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
         /// <summary>
+        /// Whether or not a file is a single orf file
+        /// </summary>
+        public bool SingleOrfFile { get; set; } = false;
+        /// <summary>
         /// List of Combined orfs to run analysis on
         /// </summary>
         public List<List<string>> CombinedOrfs { get; set; } = new List<List<string>>()
@@ -99,7 +105,7 @@ namespace PRRSAnalysis.DataStorage
         /// <summary>
         /// Maximun length that a sequence name will be when being displayed in the program
         /// </summary>
-        public int MaximunNameLength { get; set; } = 20;
+        public int MaximunNameLength { get; set; } = 25;
  
         #endregion
 
@@ -109,7 +115,15 @@ namespace PRRSAnalysis.DataStorage
         {
             Dictionary<string, string> sequences = new Dictionary<string, string>();
             string type = Path.GetExtension(fileLocation);
-            StreamReader reader = new StreamReader(fileLocation);
+            StreamReader reader;
+            try
+            {
+                reader = new StreamReader(fileLocation);
+            }
+            catch
+            {
+                throw new Exception("Cannot find file: " + fileLocation);
+            }
             if (type == ".fasta")
             {
                 try
@@ -160,7 +174,9 @@ namespace PRRSAnalysis.DataStorage
         public string CutName(string name)
         {
             if (name.Length > MaximunNameLength) name = name.Split(' ')[0];
-            if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength);
+            if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength - 3) + "...";
+            name = name.Replace("(", "[");
+            name = name.Replace(")", "]");
             return name;
         }
 
@@ -237,6 +253,7 @@ namespace PRRSAnalysis.DataStorage
         {
             AminoAcidChart = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(File.ReadAllText(OrfTempateFolder + "AminoAcidTemplate.json"));
             OrfTemplates = JsonConvert.DeserializeObject<Dictionary<string, OrfsTemplate>>(File.ReadAllText(OrfTempateFolder + "PRRS_Orf_Template.json"));
+            NSPTemplate = JsonConvert.DeserializeObject<Dictionary<string, NSPTemplate>>(File.ReadAllText(OrfTempateFolder + "PRRS_NSP_Template.json"));
         }
         public string CreateOutputDirectory(string name)
         {

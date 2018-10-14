@@ -19,4 +19,10 @@ namespace PRRSAnalysis.DataStorage
         public int LengthAA { get; set; }
         public bool HardSet { get; set; } = false;
     }
+    public class NSPTemplate
+    {
+        public string EndSite { get; set; }
+        public int Length { get; set; }
+        public string Orf { get; set; }
+    }
 }

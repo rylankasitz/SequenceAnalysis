@@ -91,6 +91,7 @@
     <Compile Include="AnalysisHelpers\GlobalCalculations.cs" />
     <Compile Include="ComponentLayouts\Loops.cs" />
     <Compile Include="Components\Alignment.cs" />
+    <Compile Include="Components\NSPFinder.cs" />
     <Compile Include="Components\OrfFinder.cs" />
     <Compile Include="Components\PercentIdentities.cs" />
     <Compile Include="AnalysisHelpers\CommandlineRun.cs" />

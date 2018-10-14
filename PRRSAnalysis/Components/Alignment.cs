@@ -18,7 +18,6 @@ namespace PRRSAnalysis.Components
         public Alignment(DataManager dataManager)
         {
             Priority = 2;
-
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }

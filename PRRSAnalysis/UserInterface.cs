@@ -29,6 +29,7 @@ namespace PRRSAnalysis
             _runAnalysis = run;
             _updateProgressBar = new UpdateProgressBar(updateProgressBar);
 
+            uxRunToolbar.Enabled = false;
             uxSequenceList.ItemCheck += uxSequenceListItem_Click;
             uxOutputLocationTextBox.Text = _dataManager.MainOutputFolder;
             uxVaccineLocationTextBox.Text = _dataManager.VaccineLocation;
@@ -44,14 +45,26 @@ namespace PRRSAnalysis
 
         private void uxRunFullAnalysis_Click(object sender, EventArgs e)
         {
-            string runname = Prompt.ShowDialog("Enter Run Name", "Run Name");
-            _dataManager.OutputFolder = _dataManager.MainOutputFolder + runname + "\\";
-            _dataManager.CreateDirectory(_dataManager.OutputFolder);
-            
-            uxProgressBar.Value = 0;
-            _dataManager.ResetVariablesForRun();
-            _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
-            _runAnalysis(_updateProgressBar);
+            try
+            {
+                string runname = Prompt.ShowDialog("Enter Run Name", "Run Name");
+                if (runname != "")
+                {
+                    uxFileToolbar.Enabled = false;
+                    uxRunToolbar.Enabled = false;
+                    _dataManager.OutputFolder = _dataManager.MainOutputFolder + runname + "\\";
+                    _dataManager.CreateDirectory(_dataManager.OutputFolder);
+
+                    uxProgressBar.Value = 0;
+                    _dataManager.ResetVariablesForRun();
+                    _dataManager.AddSequencesFromFile(_dataManager.VaccineLocation, vaccine: true);
+                    _runAnalysis(_updateProgressBar);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Analysis Failed\n" + ex.Message);
+            }
         }
 
         private void updateProgressBar(int val)
@@ -65,6 +78,11 @@ namespace PRRSAnalysis
             {
                 if (uxProgressBar.Value + val > uxProgressBar.Maximum) uxProgressBar.Value = uxProgressBar.Maximum;
                 else uxProgressBar.Value += val;
+            }
+            if(uxProgressBar.Value >= uxProgressBar.Maximum)
+            {
+                uxFileToolbar.Enabled = true;
+                uxRunToolbar.Enabled = true;
             }
         }
 
@@ -100,6 +118,7 @@ namespace PRRSAnalysis
                     }
                 }
                 updateSequenceList();
+                uxRunToolbar.Enabled = true;
             }
             catch (Exception e)
             {
@@ -118,6 +137,7 @@ namespace PRRSAnalysis
                     }
                 }
                 updateSequenceList();
+                uxRunToolbar.Enabled = true;
             }
             catch (Exception e)
             {

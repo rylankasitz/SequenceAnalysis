@@ -78,15 +78,16 @@ namespace PRRSAnalysis
                     }
                 }
                 foreach (SingleLoop singleLoop in _singleLoops)
-                {
+                {    
                     singleLoop.Run(_updateProgressBar);
                 }
                 _dataManager.RunTime = DateTime.Now - startTime;  
-                MessageBox.Show("Analysis Finished\n" + "Time Elapesed: " + _dataManager.RunTime.ToString());              
+                MessageBox.Show("Analysis Finished\n" + "Time Elapesed: " + _dataManager.RunTime.ToString(@"hh\:mm\:ss"));              
             }
             catch(Exception e)
             {
-                MessageBox.Show("Analysis Failed: " + e.ToString());
+                MessageBox.Show("Analysis Failed\n" + e.Message);
+                _updateProgressBar(1000);
             }
         }
     }

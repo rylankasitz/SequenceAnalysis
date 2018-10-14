@@ -314,8 +314,11 @@
             this.Controls.Add(this.uxSettingsLabel);
             this.Controls.Add(this.uxSequenceList);
             this.Controls.Add(this.toolStrip1);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(738, 489);
+            this.MinimumSize = new System.Drawing.Size(738, 489);
             this.Name = "UserInterface";
-            this.Text = "Form1";
+            this.Text = "Sequence Analysis Tool";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
