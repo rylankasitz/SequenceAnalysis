@@ -39,6 +39,7 @@ namespace PRRSAnalysis.Output
                 writeOrfsFound(fileDir + sequenceOrfPair.Key + ".csv", sequenceOrfPair.Value.KnownOrfData);
             fileDir = _dataManager.CreateOutputDirectory("NSPData");
             writeNSPS(fileDir + "nsplocations.csv");
+            writeHeatMapCSV();
 
 
             // Graph Stuff
@@ -66,13 +67,33 @@ namespace PRRSAnalysis.Output
                 _dataManager.MoveFile(alignments.Value.FileLocation, fileDir);
             }
         }
+        private void writeHeatMapCSV()
+        {
+            string fileDir = _dataManager.CreateOutputDirectory("PercentIdentity_CSVs");
+            foreach (KeyValuePair<string, PercentIdentityData> percentIdentityData in _dataManager.PercentIdentities)
+            {
+                StreamWriter writer = new StreamWriter(fileDir + percentIdentityData.Key + ".csv");
+                writer.Write(percentIdentityData.Key + "\n");
+                for(int i = 0; i < percentIdentityData.Value.Sequences.Count; i++)
+                {
+                    writer.Write(percentIdentityData.Value.Sequences[i] + ",");
+                }
+                writer.Write("\n");
+                for (int i = 0; i < percentIdentityData.Value.Sequences.Count; i++)
+                {
+                    writer.Write(percentIdentityData.Value.Sequences[i] + "," + String.Join(",", percentIdentityData.Value.Data[i].ToArray()) + "\n");
+                }
+                writer.Close();
+            }
+
+        }
         private void writeOrfsFound(string filedir, Dictionary<string, OrfData> sequenceOrfPair)
         {
 
             StreamWriter writer = new StreamWriter(filedir);
             foreach(KeyValuePair<string, OrfData> orfDataPair in sequenceOrfPair)
             {
-                writer.Write(orfDataPair.Value.Name + "," + orfDataPair.Value.StartLocationN + "," + orfDataPair.Value.EndLocationN + "\n");
+                writer.Write(orfDataPair.Value.Name + "," + orfDataPair.Value.StartLocationN + "," + orfDataPair.Value.EndLocationN + "\n" + orfDataPair.Value.ContentsAA + "\n");
             }
             writer.Close();
         }

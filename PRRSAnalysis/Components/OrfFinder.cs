@@ -43,7 +43,7 @@ namespace PRRSAnalysis.Components
             foreach (List<string> orfs in _dataManager.CombinedOrfs)
             {
                 try {
-                    createCombinedOrf(orfs[0], orfs[1], sequenceName, contents);
+                    createCombinedOrf(orfs, sequenceName);
                 }
                 catch { }
             }
@@ -158,8 +158,11 @@ namespace PRRSAnalysis.Components
                     if(allOrfsPair.Value.LengthAA > orfTemplate.LengthAA - lengthBuffer && 
                        allOrfsPair.Value.LengthAA < orfTemplate.LengthAA + lengthBuffer)
                     {
-                        if (!potentialOrfs.ContainsKey(orfTemplate.Name)) potentialOrfs.Add(orfTemplate.Name, new List<OrfData>());
-                        potentialOrfs[orfTemplate.Name].Add(allOrfsPair.Value);
+                        if (_dataManager.PartialOrfFile || (allOrfsPair.Value.StartLocationN - _dataManager.OrfSiteRange < orfTemplate.StartSite &&
+                            allOrfsPair.Value.StartLocationN + _dataManager.OrfSiteRange > orfTemplate.StartSite)){
+                            if (!potentialOrfs.ContainsKey(orfTemplate.Name)) potentialOrfs.Add(orfTemplate.Name, new List<OrfData>());
+                            potentialOrfs[orfTemplate.Name].Add(allOrfsPair.Value);
+                        }
                     }
                 }
 
@@ -180,9 +183,10 @@ namespace PRRSAnalysis.Components
                 KeyValuePair<float, OrfData> highestOrf = new KeyValuePair<float, OrfData>(_dataManager.OrfIdentifierPIThreshold, new OrfData());
                 if (potentialOrfs.ContainsKey(orfTemplate.Name))
                 {
+                    float pi = 0;
                     foreach (OrfData potentialOrfPair in potentialOrfs[orfTemplate.Name])
                     {
-                        float pi = GlobalCalculations.CalculatePercentIdentity(potentialOrfPair.ContentsAA, orfTemplate.Sequence);
+                        pi = GlobalCalculations.CalculatePercentIdentity(potentialOrfPair.ContentsAA, orfTemplate.Sequence);                                                  
                         if (pi > highestOrf.Key)
                         {
                             highestOrf = new KeyValuePair<float, OrfData>(pi, potentialOrfPair);
@@ -199,7 +203,6 @@ namespace PRRSAnalysis.Components
                     }
                 }
             }
-
             return knownOrfs;
         }
 
@@ -296,16 +299,31 @@ namespace PRRSAnalysis.Components
 
         #region Private Helper Methods
 
-        private void createCombinedOrf(string startOrf, string endOrf, string sequencename, string contents)
+        private void createCombinedOrf(List<string> orfs, string sequencename)
         {
-            Dictionary<string, int[]> newOrf = new Dictionary<string, int[]>();
-            string newName = startOrf + "-" + endOrf;
+            string newName = orfs[0] + "-" + orfs[orfs.Count-1];
+            string contentsN = "";
+            string contentsA = "";
+            /*Dictionary<string, int[]> newOrf = new Dictionary<string, int[]>();
             int start = _dataManager.SequencesUsed[sequencename].KnownOrfData[startOrf].StartLocationN;
             int end = _dataManager.SequencesUsed[sequencename].KnownOrfData[endOrf].EndLocationN;
             newOrf[newName] = new int[3];
             newOrf[startOrf + "-" + endOrf][0] = start;
             newOrf[startOrf + "-" + endOrf][1] = end;
-            addOrfToData(_dataManager.SequencesUsed[sequencename].KnownOrfData, newOrf, contents);
+            //addOrfToData(_dataManager.SequencesUsed[sequencename].KnownOrfData, newOrf, contents);*/
+            foreach(KeyValuePair<string, OrfData> orfData in _dataManager.SequencesUsed[sequencename].KnownOrfData)
+            {
+                if (orfs.Contains(orfData.Key))
+                {
+                    contentsN += orfData.Value.ContentsN;
+                    contentsA += orfData.Value.ContentsAA;
+                }
+            }
+
+            _dataManager.SequencesUsed[sequencename].KnownOrfData[newName] = new OrfData();
+            _dataManager.SequencesUsed[sequencename].KnownOrfData[newName].ContentsN = contentsN;
+            _dataManager.SequencesUsed[sequencename].KnownOrfData[newName].ContentsAA = contentsA;
+            _dataManager.SequencesUsed[sequencename].KnownOrfData[newName].Name = newName;
 
             if (!_dataManager.AnalysisNames.Contains(newName + "_n"))
                 _dataManager.AnalysisNames.Add(newName + "_n");

@@ -29,6 +29,8 @@ namespace PRRSAnalysis.Components
             _commandlineRun.Run();
             AddData();
             sortData();
+            string fileDir = _dataManager.CreateOutputDirectory("Recombination");
+            _dataManager.MoveFile(_dataManager.DataFolder + "Wholegenome_aligned.fasta.csv", fileDir);
 
             updateProgressBar(30);
         }
@@ -48,7 +50,9 @@ namespace PRRSAnalysis.Components
                     {
                         StartSite = Convert.ToInt32(removeExtra(parts[4])),
                         EndSite = Convert.ToInt32(removeExtra(parts[5])),
-                        SequenceLength = _dataManager.SequencesUsed[sequenceName].Contents.Length
+                        SequenceLength = _dataManager.SequencesUsed[sequenceName].Contents.Length,
+                        MajorParent = parts[9],
+                        MinorParent = parts[10]
                     };
                     _dataManager.RecombinationData[sequenceName].Add(recombinationData);
                 }

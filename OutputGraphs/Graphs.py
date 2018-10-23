@@ -1,10 +1,11 @@
 import plotly.graph_objs as go
+import plotly.figure_factory as ff
 import HelperMethods
 from collections import OrderedDict
 from ete3 import Tree, TreeStyle
 import base64
 
-def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsize=11, title="", visible=True):
+'''def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsize=11, title="", visible=True):
     data = []
     annotations = []  
     sequences = []
@@ -20,11 +21,12 @@ def StackedSequenceGraph(inputData, sequencename, nameOrder, Sequences, labelsiz
             del dataNormal[sequencename]
             del dataInverse[sequencename]
             s = sequences[:]
-            for seq in s:      
+            for i,seq in enumerate(s):   
+                if len(seq) > 28:
+                    sequences[i] = seq[:25] + "..."
                 if Sequences[seq]["Vaccine"]:
                     sequences.remove(seq)
                     
-
             orfparts = orfname.split('_')
             type = orfparts[len(orfparts)-1]
             name = orfname.rsplit('_', 1)[0]
@@ -64,18 +66,31 @@ def CreateDropDown(datalist, datalen, rangeD, annotations):
         for j in rangeD[d]:
             visible[j] = True
         visible += [True]*100000
-        for i,x in enumerate(annotations[d]):
-            annotations[d][i]['visible'] = True;
-        buttons.append(dict(args=[{'visible': visible}, {'annotations': annotations[d]}], label=d, method='update'))
+        #for i,x in enumerate(annotations[d]):
+        #    annotations[d][i]['visible'] = True;
+        #buttons.append(dict(args=[{'visible': visible}, {'annotations': annotations[d]}], label=d, method='update'))
+        buttons.append(dict(args=[{'visible': visible}], label=d, method='update'))
         visible = [False]*datalen
     return [dict(active=0, showactive=False, buttons=buttons, direction = 'down', pad = {'r': 10, 't': 0}, x = 0, 
-                 xanchor = 'left', y = 1.3, yanchor = 'middle')]
+                 xanchor = 'left', y = 1.3, yanchor = 'middle')]'''
+
+def CreateNewDropDown(seqs, odata):
+    buttons = []
+    visible = [False]*len(seqs)
+    for i,d in enumerate(seqs):
+        visible[i] = True
+        buttons.append(dict(args=[{'visible': visible}, {'annotations': odata[i].annotations}], label=d, method='update'))
+        visible = [False]*len(seqs)
+    return [dict(active=0, showactive=False, buttons=buttons, direction = 'down', pad = {'r': 10, 't': 0 }, x = 0, 
+                 xanchor = 'left', y = 1.6, yanchor = 'middle')]
+
 
 def CreateRecombinationGraph(inputData, colors, sequencesdata, title=""):
     bpsdata = OrderedDict()
     bpsPoints = OrderedDict()
     data = []
     labels = ["Non Recombinations Site", "RecombinationSite"]
+
     
     # Get data
     for seq, recombData in inputData.items():     
@@ -125,6 +140,56 @@ def CreatePhyloGeneticTree(inputfile, outputfile, size):
     ts.optimal_scale_level = "mid"
     t = tree.render(str(outputfile), w=size, units="px", tree_style=None)
 
+def CreateOrfPlot(data, seqname, seqdata, Heatmap_Color, Heatmap_MinVal, analysisnames, title = ""):
+    orfnames = []
+    pidata_n = []
+    pidata_a = []
+    sequences = []
+    cn = ca = 0
+    for orf in analysisnames:
+        if orf != "Wholegenome" and orf != "Orf2b-Orf5a_aa" and orf != "Orf2b-Orf5a_n":
+            type = orf.split("_")[1]
+            name = orf.split("_")[0]
+            if type == "n": pidata_n.append([])
+            if type == "aa": pidata_a.append([])
+            for seqn, val in data[orf]["Dic"][seqname].items():
+                if not seqdata[seqn]["Vaccine"] and not seqn == seqname:
+                    if type == "n" : 
+                        pidata_n[cn].append(round(val, 1))
+                    if type == "aa" : 
+                        pidata_a[ca].append(round(val, 1))
+                    if not seqn in sequences:
+                        sequences.append(seqn)
+            if not name in orfnames:
+                orfnames.append(name)
+            if type == "n": cn+=1
+            if type == "aa": ca+=1
+    pidata_a = list(map(list, zip(*pidata_a)))
+    pidata_n = list(map(list, zip(*pidata_n)))
+
+    for i,seq in enumerate(sequences):
+        if len(seq) > 27:
+            sequences[i] = seq[:24] + "..."
+
+    fig_a = ff.create_annotated_heatmap(z=pidata_a, y=sequences, x=orfnames, colorscale=Heatmap_Color, zmin=Heatmap_MinVal, zmax=100, 
+                                       hoverinfo = "none", ygap = 10)
+    fig_a['layout']['title'] = title + " (Amino Acid)"
+    fig_a['layout']['xaxis']['showgrid'] = False
+    height = fig_a['layout']['height'] = len(sequences)*75
+    fig_a['layout']['margin'] = dict(l=200, r=0)
+    for i in range(len(fig_a.layout.annotations)):
+        fig_a.layout.annotations[i].font.size = 10
+
+    fig_n = ff.create_annotated_heatmap(z=pidata_n, y=sequences, x=orfnames, colorscale=Heatmap_Color, zmin=Heatmap_MinVal, zmax=100, 
+                                       hoverinfo = "none", ygap = 10)
+    fig_n['layout']['title'] = title + " (Nucleotide)"
+    fig_n['layout']['xaxis']['showgrid'] = False
+    height = fig_n['layout']['height'] = len(sequences)*75
+    fig_n['layout']['margin'] = dict(l=200, r=0)
+    for i in range(len(fig_n.layout.annotations)):
+        fig_n.layout.annotations[i].font.size = 10
+
+    return fig_a, fig_n, height
 
 # Html Output
 def addRow(height):
@@ -152,12 +217,12 @@ def CreateImageHtmlString(location, width='auto', height='auto', title="", min_w
     encoded = base64.b64encode(open(location, "rb").read())
     return '''<div width="''' + str(width) + '''" height="''' + str(height) + '''"
                 style="min-width:''' + str(min_width) +''';">
-                <center style="float:left;"><h4>''' + title + '''</h4></center>
-                <img src="data:image/png;base64, ''' + encoded + '''"/></div>'''
+                <center style="float:left;min-width:''' + str(min_width) + ''';"><h4>''' + title + '''</h4></center>
+                <img src="data:image/png;base64, ''' + encoded + '''" width="''' + str(width) + '''"/></div>'''
 
 def InitalizeHtmlString():
     return '''<html><head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-                          <style>body{ margin:0 50; } iframe{ float: left;  overflow:hidden; } img{ float: left; padding: 75 }</style></head><body>'''
+                          <style>body{ margin:0; } iframe{ float: left;  overflow:hidden; } img{ float: left; padding: 75 }</style></head><body>'''
 
 def EndHtmlString():
     return  '''</body></html>'''

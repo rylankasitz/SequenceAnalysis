@@ -29,3 +29,12 @@ def findOrfFromSeq(sequencedata, seqname, pos):
         if value['StartLocationN'] <= pos and value['EndLocationN'] >= pos:
             return orf
     return ""
+
+def removeVaccines(sequences):
+    s = []
+    for i,seq in enumerate(sequences):
+        if len(seq) > 27:
+            s.append(seq[:24] + "...")
+        else:
+            s.append(seq)
+    return s

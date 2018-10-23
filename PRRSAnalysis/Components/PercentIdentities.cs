@@ -26,8 +26,10 @@ namespace PRRSAnalysis.Components
             {
                 _dataManager.PercentIdentities[analysisName].Dic[sequence1.Key] = new Dictionary<string, float>();
                 _dataManager.PercentIdentities[analysisName].DicInverse[sequence1.Key] = new Dictionary<string, float>();
-                _dataManager.PercentIdentities[analysisName].Sequences.Add(sequence1.Key);
+                if(!_dataManager.SequencesUsed[sequence1.Key].Vaccine)
+                    _dataManager.PercentIdentities[analysisName].Sequences.Add(sequence1.Key);
                 List<float> dataList = new List<float>();
+                List<float> vdata = new List<float>();
                 float total = 0;
                 int count = 0;
                 Dictionary<int, Dictionary<string, string>> siteChanges = new Dictionary<int, Dictionary<string, string>>();
@@ -41,10 +43,12 @@ namespace PRRSAnalysis.Components
                         _dataManager.PercentIdentities[analysisName].DicInverse[sequence1.Key][sequence2.Key] = 100 - percent;
                     }
                     dataList.Add(percent);
-                    
+                    if (!_dataManager.SequencesUsed[sequence2.Key].Vaccine)
+                        vdata.Add(percent);
                 }
                 _dataManager.PercentIdentities[analysisName].SiteChanges[sequence1.Key] = siteChanges;
-                _dataManager.PercentIdentities[analysisName].Data.Add(dataList);
+                if (!_dataManager.SequencesUsed[sequence1.Key].Vaccine)
+                    _dataManager.PercentIdentities[analysisName].Data.Add(vdata);
             }
 
             updateProgressBar((int) (20 / (float) _dataManager.AnalysisCount));

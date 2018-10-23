@@ -61,13 +61,13 @@ namespace PRRSAnalysis.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool RunReverseFrames {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool PartialOrfFile {
             get {
-                return ((bool)(this["RunReverseFrames"]));
+                return ((bool)(this["PartialOrfFile"]));
             }
             set {
-                this["RunReverseFrames"] = value;
+                this["PartialOrfFile"] = value;
             }
         }
         

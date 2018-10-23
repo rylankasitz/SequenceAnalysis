@@ -23,7 +23,8 @@ namespace PRRSAnalysis.Components
         {
             string currentOrf = "";
             int prevEnd = 0;
-            int preLength = 0;
+            int tempEnd = 0;
+            int preLength = 0;        
             foreach (KeyValuePair<string, NSPTemplate> nspTemplatePair in _dataManager.NSPTemplate)
             {
                 currentOrf = nspTemplatePair.Value.Orf;
@@ -31,7 +32,8 @@ namespace PRRSAnalysis.Components
                 {
                     string content = _dataManager.Alignments[nspTemplatePair.Value.Orf + "_aa"].Contents.First().Value;
                     string currentEndSite = nspTemplatePair.Value.EndSite;
-                    int thresholdScore = 300;
+                    int thresholdScore = 1000;
+                    bool found = true;
                     for (int i = prevEnd; i < content.Length - 1; i++)
                     {
                         if (currentEndSite == "X")
@@ -39,24 +41,35 @@ namespace PRRSAnalysis.Components
                             _dataManager.NSPLocations[nspTemplatePair.Key] = new int[2] { (i + 1) * 3 + preLength, (i + nspTemplatePair.Value.Length) * 3 + preLength };
                             i += nspTemplatePair.Value.Length;
                             prevEnd = i;
+                            found = false;
                             break;
                         }
                         else if (currentEndSite == "End")
                         {
                             _dataManager.NSPLocations[nspTemplatePair.Key] = new int[2] { (i + 1) * 3 + preLength, (content.Length) * 3 + preLength };
                             prevEnd = 0;
-                            preLength += content.Length;
+                            preLength += content.Length*3;
+                            found = false;
                             break;
                         }
-                        else if (currentEndSite == (content[i].ToString() + content[i + 1].ToString()) &&
-                                thresholdScore > Math.Abs(i - (nspTemplatePair.Value.Length + prevEnd)))
+                        else if (currentEndSite == (content[i].ToString() + content[i + 1].ToString()))
                         {
-                            _dataManager.NSPLocations[nspTemplatePair.Key] = new int[2] { (prevEnd) * 3 + preLength, (i + 1) * 3 + preLength };
-                            prevEnd = i + 1;
-                            thresholdScore = Math.Abs(i - (nspTemplatePair.Value.Length + prevEnd));
-                            break;
+                            if (thresholdScore > Math.Abs(i - (nspTemplatePair.Value.Length + prevEnd)))
+                            {                           
+                                thresholdScore = Math.Abs(i - (nspTemplatePair.Value.Length + prevEnd));
+                                _dataManager.NSPLocations[nspTemplatePair.Key] = new int[2] { (prevEnd) * 3 + preLength, (i + 1) * 3 + preLength };
+                                tempEnd = i + 1;
+                            }
+                            else
+                            {
+                                prevEnd = tempEnd;
+                                thresholdScore = 1000;
+                                found = false;
+                                break;
+                            }
                         }
                     }
+                    if (found) prevEnd = tempEnd;
                 }
             }
         }

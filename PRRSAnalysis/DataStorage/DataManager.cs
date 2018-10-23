@@ -27,8 +27,9 @@ namespace PRRSAnalysis.DataStorage
 
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
-        public float OrfLengthThreshold { get; set; } = .25f;
-        public float OrfIdentifierPIThreshold { get; set; } = 0;
+        public float OrfLengthThreshold { get; } = .3f;
+        public float OrfIdentifierPIThreshold { get; } = 0;
+        public float OrfSiteRange { get; } = 2500;
         public Dictionary<string, NSPTemplate> NSPTemplate { get; set; }
 
         #endregion
@@ -89,9 +90,9 @@ namespace PRRSAnalysis.DataStorage
         /// </summary>
         public int MinimumOrfLength { get; set; } = 75;
         /// <summary>
-        /// Whether or not a file is a single orf file
+        /// Whether or not read in files are paritial orfs
         /// </summary>
-        public bool SingleOrfFile { get; set; } = false;
+        public bool PartialOrfFile { get; set; } = false;
         /// <summary>
         /// List of Combined orfs to run analysis on
         /// </summary>
@@ -99,13 +100,13 @@ namespace PRRSAnalysis.DataStorage
         {
             new List<string>()
             {
-                "Orf2b", "Orf5a"
+                "Orf2b", "Orf3", "Orf4", "Orf5a"
             }
         };
         /// <summary>
         /// Maximun length that a sequence name will be when being displayed in the program
         /// </summary>
-        public int MaximunNameLength { get; set; } = 25;
+        public int MaximunNameLength { get; set; } = 40;
  
         #endregion
 
@@ -174,7 +175,7 @@ namespace PRRSAnalysis.DataStorage
         public string CutName(string name)
         {
             if (name.Length > MaximunNameLength) name = name.Split(' ')[0];
-            if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength - 3) + "...";
+            if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength);
             name = name.Replace("(", "[");
             name = name.Replace(")", "]");
             return name;
@@ -307,7 +308,7 @@ namespace PRRSAnalysis.DataStorage
             Settings.Default.VaccineLocation = VaccineLocation;
             Settings.Default.MafftSettings = MafftSettings;
             Settings.Default.MinimumOrfLength = MinimumOrfLength;
-            Settings.Default.RunReverseFrames = RunReverseFrames;
+            Settings.Default.PartialOrfFile = PartialOrfFile;
             Settings.Default.OutputFolder = MainOutputFolder;
             Settings.Default.RDP4 = RDPLocation;
             Settings.Default.InitialRun = RDP4Installed;
@@ -318,7 +319,7 @@ namespace PRRSAnalysis.DataStorage
         {            
             MafftSettings = Settings.Default.MafftSettings;
             MinimumOrfLength = Settings.Default.MinimumOrfLength;
-            RunReverseFrames = Settings.Default.RunReverseFrames;
+            PartialOrfFile = Settings.Default.PartialOrfFile;
             MainOutputFolder = Settings.Default.OutputFolder;
             VaccineLocation = Settings.Default.VaccineLocation;
             RDPLocation = Settings.Default.RDP4;

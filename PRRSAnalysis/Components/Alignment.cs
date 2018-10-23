@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PRRSAnalysis.ComponentLayouts;
 using System.Windows.Forms;
+using System.IO;
 
 namespace PRRSAnalysis.Components
 {
@@ -31,6 +32,12 @@ namespace PRRSAnalysis.Components
             _commandlineRun.ProgramName = "mafft-win\\mafft";
             _commandlineRun.Arguments = getArgs() + " --out " + outfile + " " + _dataManager.AnalysisFiles[name] + ".fasta";
             _commandlineRun.Run();
+
+            if (!File.Exists(outfile))
+            {
+                StreamWriter writer = new StreamWriter(outfile);
+                writer.Close();
+            }
 
             _dataManager.Alignments.Add(name, new AlignmentData());
             _dataManager.Alignments[name].Contents = _dataManager.FileToSequences(outfile);

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using PRRSAnalysis.DataStorage;
+using System.IO;
 
 namespace PRRSAnalysis.AnalysisHelpers
 {
@@ -41,6 +43,20 @@ namespace PRRSAnalysis.AnalysisHelpers
                 }
             }
             return (float)Math.Round(totalIdentity / (float)sequence1.Length * 100, 3);
+        }
+        public static float CalculateAlignedPercentIdentity(string sequence1, string sequence2, DataManager dataManager)
+        {
+            CommandlineRun commandlineRun = new CommandlineRun();
+            string infile = dataManager.DataFolder + "temp_pi.fasta";
+            string outfile = dataManager.DataFolder + "temp_pi_result.fasta";
+            StreamWriter writer = new StreamWriter(infile);
+            writer.Write(">S1\n" + sequence1 + "\n>S2\n" + sequence2);
+            writer.Close();
+            commandlineRun.ProgramName = "mafft-win\\mafft";
+            commandlineRun.Arguments = "--retree 1 --maxiterate 0 --out " + outfile + " " + infile;
+            commandlineRun.Run();
+            string[] result = dataManager.FileToSequences(outfile).Values.ToArray();
+            return CalculatePercentIdentity(result[0], result[1]);
         }
     }  
 }

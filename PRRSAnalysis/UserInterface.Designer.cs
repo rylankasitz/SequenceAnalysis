@@ -45,10 +45,8 @@
             this.uxSettingsLabel = new System.Windows.Forms.Label();
             this.uxMafftSettingsLabel = new System.Windows.Forms.Label();
             this.uxAlignmentType = new System.Windows.Forms.ComboBox();
-            this.uxOrfDetectionLabel = new System.Windows.Forms.Label();
             this.uxMinOrfLenghtLabel = new System.Windows.Forms.Label();
             this.uxMinOrfLengthTextbox = new System.Windows.Forms.TextBox();
-            this.uxRunReverseReadsCB = new System.Windows.Forms.CheckBox();
             this.uxVaccineLocationLabel = new System.Windows.Forms.Label();
             this.uxVaccineLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxVaccineLocationButton = new System.Windows.Forms.Button();
@@ -56,6 +54,7 @@
             this.uxOutputLocationTextBox = new System.Windows.Forms.TextBox();
             this.uxOutputLocationButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,7 +142,7 @@
             // uxRunFullAnalysis
             // 
             this.uxRunFullAnalysis.Name = "uxRunFullAnalysis";
-            this.uxRunFullAnalysis.Size = new System.Drawing.Size(139, 22);
+            this.uxRunFullAnalysis.Size = new System.Drawing.Size(180, 22);
             this.uxRunFullAnalysis.Text = "Full Analysis";
             this.uxRunFullAnalysis.Click += new System.EventHandler(this.uxRunFullAnalysis_Click);
             // 
@@ -174,7 +173,7 @@
             // 
             this.uxMafftSettingsLabel.AutoSize = true;
             this.uxMafftSettingsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.uxMafftSettingsLabel.Location = new System.Drawing.Point(248, 150);
+            this.uxMafftSettingsLabel.Location = new System.Drawing.Point(250, 116);
             this.uxMafftSettingsLabel.Name = "uxMafftSettingsLabel";
             this.uxMafftSettingsLabel.Size = new System.Drawing.Size(97, 13);
             this.uxMafftSettingsLabel.TabIndex = 3;
@@ -187,54 +186,33 @@
             "Accurate",
             "Fast",
             "Very Fast"});
-            this.uxAlignmentType.Location = new System.Drawing.Point(351, 147);
+            this.uxAlignmentType.Location = new System.Drawing.Point(353, 113);
             this.uxAlignmentType.Name = "uxAlignmentType";
             this.uxAlignmentType.Size = new System.Drawing.Size(96, 21);
             this.uxAlignmentType.TabIndex = 4;
             this.uxAlignmentType.SelectedIndexChanged += new System.EventHandler(this.uxAlignmentType_SelectedIndexChanged);
             // 
-            // uxOrfDetectionLabel
-            // 
-            this.uxOrfDetectionLabel.AutoSize = true;
-            this.uxOrfDetectionLabel.Location = new System.Drawing.Point(248, 61);
-            this.uxOrfDetectionLabel.Name = "uxOrfDetectionLabel";
-            this.uxOrfDetectionLabel.Size = new System.Drawing.Size(70, 13);
-            this.uxOrfDetectionLabel.TabIndex = 7;
-            this.uxOrfDetectionLabel.Text = "Orf Detection";
-            // 
             // uxMinOrfLenghtLabel
             // 
             this.uxMinOrfLenghtLabel.AutoSize = true;
-            this.uxMinOrfLenghtLabel.Location = new System.Drawing.Point(259, 112);
+            this.uxMinOrfLenghtLabel.Location = new System.Drawing.Point(248, 59);
             this.uxMinOrfLenghtLabel.Name = "uxMinOrfLenghtLabel";
-            this.uxMinOrfLenghtLabel.Size = new System.Drawing.Size(105, 13);
+            this.uxMinOrfLenghtLabel.Size = new System.Drawing.Size(99, 13);
             this.uxMinOrfLenghtLabel.TabIndex = 9;
-            this.uxMinOrfLenghtLabel.Text = "Minimun Orf Length :";
+            this.uxMinOrfLenghtLabel.Text = "Minimun Orf Length";
             // 
             // uxMinOrfLengthTextbox
             // 
-            this.uxMinOrfLengthTextbox.Location = new System.Drawing.Point(370, 109);
+            this.uxMinOrfLengthTextbox.Location = new System.Drawing.Point(353, 56);
             this.uxMinOrfLengthTextbox.Name = "uxMinOrfLengthTextbox";
             this.uxMinOrfLengthTextbox.Size = new System.Drawing.Size(77, 20);
             this.uxMinOrfLengthTextbox.TabIndex = 10;
             this.uxMinOrfLengthTextbox.TextChanged += new System.EventHandler(this.uxMinOrfLengthTextbox_TextChanged);
             // 
-            // uxRunReverseReadsCB
-            // 
-            this.uxRunReverseReadsCB.AutoSize = true;
-            this.uxRunReverseReadsCB.CheckAlign = System.Drawing.ContentAlignment.BottomRight;
-            this.uxRunReverseReadsCB.Location = new System.Drawing.Point(262, 86);
-            this.uxRunReverseReadsCB.Name = "uxRunReverseReadsCB";
-            this.uxRunReverseReadsCB.Size = new System.Drawing.Size(123, 17);
-            this.uxRunReverseReadsCB.TabIndex = 11;
-            this.uxRunReverseReadsCB.Text = "Run Reverse Reads";
-            this.uxRunReverseReadsCB.UseVisualStyleBackColor = true;
-            this.uxRunReverseReadsCB.CheckedChanged += new System.EventHandler(this.uxRunReverseReadsCB_CheckedChanged);
-            // 
             // uxVaccineLocationLabel
             // 
             this.uxVaccineLocationLabel.AutoSize = true;
-            this.uxVaccineLocationLabel.Location = new System.Drawing.Point(248, 182);
+            this.uxVaccineLocationLabel.Location = new System.Drawing.Point(250, 150);
             this.uxVaccineLocationLabel.Name = "uxVaccineLocationLabel";
             this.uxVaccineLocationLabel.Size = new System.Drawing.Size(101, 13);
             this.uxVaccineLocationLabel.TabIndex = 12;
@@ -242,15 +220,15 @@
             // 
             // uxVaccineLocationTextBox
             // 
-            this.uxVaccineLocationTextBox.Location = new System.Drawing.Point(351, 179);
+            this.uxVaccineLocationTextBox.Location = new System.Drawing.Point(353, 145);
             this.uxVaccineLocationTextBox.Name = "uxVaccineLocationTextBox";
-            this.uxVaccineLocationTextBox.Size = new System.Drawing.Size(327, 20);
+            this.uxVaccineLocationTextBox.Size = new System.Drawing.Size(325, 20);
             this.uxVaccineLocationTextBox.TabIndex = 13;
             this.uxVaccineLocationTextBox.TextChanged += new System.EventHandler(this.uxVaccineLocationTextBox_TextChanged);
             // 
             // uxVaccineLocationButton
             // 
-            this.uxVaccineLocationButton.Location = new System.Drawing.Point(684, 177);
+            this.uxVaccineLocationButton.Location = new System.Drawing.Point(684, 143);
             this.uxVaccineLocationButton.Name = "uxVaccineLocationButton";
             this.uxVaccineLocationButton.Size = new System.Drawing.Size(26, 23);
             this.uxVaccineLocationButton.TabIndex = 14;
@@ -268,7 +246,7 @@
             // 
             // uxOutputLocationTextBox
             // 
-            this.uxOutputLocationTextBox.Location = new System.Drawing.Point(351, 216);
+            this.uxOutputLocationTextBox.Location = new System.Drawing.Point(353, 181);
             this.uxOutputLocationTextBox.Name = "uxOutputLocationTextBox";
             this.uxOutputLocationTextBox.Size = new System.Drawing.Size(327, 20);
             this.uxOutputLocationTextBox.TabIndex = 16;
@@ -276,7 +254,7 @@
             // 
             // uxOutputLocationButton
             // 
-            this.uxOutputLocationButton.Location = new System.Drawing.Point(684, 214);
+            this.uxOutputLocationButton.Location = new System.Drawing.Point(686, 179);
             this.uxOutputLocationButton.Name = "uxOutputLocationButton";
             this.uxOutputLocationButton.Size = new System.Drawing.Size(26, 23);
             this.uxOutputLocationButton.TabIndex = 17;
@@ -287,17 +265,30 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(249, 219);
+            this.label1.Location = new System.Drawing.Point(250, 186);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 13);
             this.label1.TabIndex = 18;
             this.label1.Text = "Output Location";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.checkBox1.Location = new System.Drawing.Point(248, 86);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(121, 17);
+            this.checkBox1.TabIndex = 19;
+            this.checkBox1.Text = "Partial Orf File          ";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // UserInterface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(722, 450);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.uxOutputLocationButton);
             this.Controls.Add(this.uxOutputLocationTextBox);
@@ -305,10 +296,8 @@
             this.Controls.Add(this.uxVaccineLocationButton);
             this.Controls.Add(this.uxVaccineLocationTextBox);
             this.Controls.Add(this.uxVaccineLocationLabel);
-            this.Controls.Add(this.uxRunReverseReadsCB);
             this.Controls.Add(this.uxMinOrfLengthTextbox);
             this.Controls.Add(this.uxMinOrfLenghtLabel);
-            this.Controls.Add(this.uxOrfDetectionLabel);
             this.Controls.Add(this.uxAlignmentType);
             this.Controls.Add(this.uxMafftSettingsLabel);
             this.Controls.Add(this.uxSettingsLabel);
@@ -344,10 +333,8 @@
         private System.Windows.Forms.Label uxSettingsLabel;
         private System.Windows.Forms.Label uxMafftSettingsLabel;
         private System.Windows.Forms.ComboBox uxAlignmentType;
-        private System.Windows.Forms.Label uxOrfDetectionLabel;
         private System.Windows.Forms.Label uxMinOrfLenghtLabel;
         private System.Windows.Forms.TextBox uxMinOrfLengthTextbox;
-        private System.Windows.Forms.CheckBox uxRunReverseReadsCB;
         private System.Windows.Forms.Label uxVaccineLocationLabel;
         private System.Windows.Forms.TextBox uxVaccineLocationTextBox;
         private System.Windows.Forms.Button uxVaccineLocationButton;
@@ -355,6 +342,7 @@
         private System.Windows.Forms.TextBox uxOutputLocationTextBox;
         private System.Windows.Forms.Button uxOutputLocationButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }
 

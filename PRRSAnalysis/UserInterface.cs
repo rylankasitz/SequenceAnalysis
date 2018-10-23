@@ -35,7 +35,6 @@ namespace PRRSAnalysis
             uxVaccineLocationTextBox.Text = _dataManager.VaccineLocation;
             uxMinOrfLengthTextbox.Text = _dataManager.MinimumOrfLength.ToString();
             uxAlignmentType.SelectedItem = _dataManager.MafftSettings;
-            uxRunReverseReadsCB.Checked = _dataManager.RunReverseFrames;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -64,6 +63,7 @@ namespace PRRSAnalysis
             catch (Exception ex)
             {
                 MessageBox.Show("Analysis Failed\n" + ex.Message);
+                _updateProgressBar(1000);
             }
         }
 
@@ -199,7 +199,7 @@ namespace PRRSAnalysis
 
         private void uxRunReverseReadsCB_CheckedChanged(object sender, EventArgs e)
         {
-            _dataManager.RunReverseFrames = uxRunReverseReadsCB.Checked;
+            //_dataManager.RunReverseFrames = uxRunReverseReadsCB.Checked;
         }
 
         private void uxVaccineLocationButton_Click(object sender, EventArgs e)
@@ -262,7 +262,13 @@ namespace PRRSAnalysis
             }
         }
 
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            _dataManager.PartialOrfFile = checkBox1.Checked;
+        }
+
         #endregion
+
     }
 
     public static class Prompt
@@ -278,7 +284,7 @@ namespace PRRSAnalysis
                 StartPosition = FormStartPosition.CenterScreen
             };
             Label textLabel = new Label() { Left = 50, Top = 20, Text = text };
-            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 75 };
+            TextBox textBox = new TextBox() { Left = 30, Top = 50, Width = 130 };
             Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
             confirmation.Click += (sender, e) => { prompt.Close(); };
             prompt.Controls.Add(textBox);
