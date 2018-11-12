@@ -28,8 +28,8 @@ args=parser.parse_args()
 DataFolder = args.i
 OutputFolder = args.out
 
-DataFolder = r"C:\Users\rylan kasitz\source\repos\SequenceAnalysis\PRRSAnalysis\bin\Debug\_TempData" # temp
-OutputFolder = r"C:\Users\rylan kasitz\Documents\SequenceAnalysisProgram\Output\Test"   # temp
+#DataFolder = r"C:\Users\Rylan\source\repos\SequenceAnalysis\PRRSAnalysis\bin\Debug\_TempData" # temp
+#OutputFolder = r"C:\Users\Rylan\Documents\SequenceAnalysisProgram\Output\Test"   # temp
 
 # Get data variables
 Sequences = HelperMethods.readJson(DataFolder + "/Sequences.json")
@@ -55,9 +55,9 @@ elif size < 600:
 for analysisName, data in PercentIdentityData.items():
     #s = HelperMethods.removeVaccines(data["Sequences"])
     p = ff.create_annotated_heatmap(z=data["Data"], y=data["Sequences"], x=data["Sequences"], colorscale=Heatmap_Color, zmin=Heatmap_MinVal, 
-                                 zmax=100, hoverinfo = "none", xaxis=dict(side='bottom'))
+                                 zmax=100, hoverinfo = "none")
     p.layout.update(autosize=True, width=size, height=size, margin=go.Margin(l=250,r=100,b=200,t=50,pad=4))
-    plot(p, filename=OutputFolder + "/PercentIdentity_Heatmaps/" + analysisName + ".html", auto_open=False, config={'showLink': False})
+    plot(p, filename=OutputFolder + "/PercentIdentity_Heatmaps/" + analysisName + ".html", auto_open=False, config={'showLink': False, 'displayModeBar': False })
 
 # Phylogetetic Trees
 for name, value in Trees.items():
@@ -119,7 +119,6 @@ rangeD_n = {}
 prevousRange = 0
 seqs = []
 vis = True
-orf_height = 0
 for sequence in Sequences.keys():
     if not Sequences[sequence]["Vaccine"]:
         fig_a, fig_n, orf_height = Graphs.CreateOrfPlot(PercentIdentityData, sequence, Sequences, Heatmap_Color, Heatmap_MinVal, 
@@ -131,15 +130,20 @@ for sequence in Sequences.keys():
         seqs.append(sequence)
         layout_n = fig_n['layout']
         layout_a = fig_a['layout']
+
+orf_height = 75*len(seqs) + 75
+if orf_height < 350:
+    orf_height = 350
 dropdown_n = Graphs.CreateNewDropDown(seqs, layouts_n)
 layout_n['updatemenus'] = dropdown_n
-layout_n['height'] = orf_height = len(seqs)*75 + 75
+layout_n['height'] = orf_height
 layout_n['title'] = "Nucleotide Comparison"
 layout_n['margin']['t'] = 200
 fig_orfDropdown_n = go.Figure(data=orfData_n, layout=layout_n)
+
 dropdown_a = Graphs.CreateNewDropDown(seqs, layouts_a)
 layout_a['updatemenus'] = dropdown_a
-layout_a['height'] = orf_height = len(seqs)*75 + 75
+layout_a['height'] = orf_height
 layout_a['title'] = "Amino Acid Comparison"
 layout_a['margin']['t'] = 200
 fig_orfDropdown_a = go.Figure(data=orfData_a, layout=layout_a)
@@ -155,29 +159,29 @@ s = HelperMethods.removeVaccines(PercentIdentityData["Wholegenome"]["Sequences"]
 fig_Heatmap_Wholegenome = ff.create_annotated_heatmap(z=PercentIdentityData["Wholegenome"]["Data"], y=s, 
                           x=s, colorscale=Heatmap_Color, zmin=Heatmap_MinVal, zmax=100, hoverinfo = "none")
 fig_Heatmap_Wholegenome.layout.update(title="Whole Genome Nucleotide Heatmap", width=size, height=size, 
-                                    margin=go.Margin(l=200,r=75,b=200,t=50,pad=4), xaxis=dict(side='bottom'))
+                                    margin=go.Margin(l=200,r=100,b=200,t=50,pad=4), xaxis=dict(side='bottom'))
 try:
     s = HelperMethods.removeVaccines(PercentIdentityData["Orf2b-Orf5a_aa"]["Sequences"])
     fig_Heatmap_orf2b5a = ff.create_annotated_heatmap(z=PercentIdentityData["Orf2b-Orf5a_aa"]["Data"], y=s, 
                           x=s, colorscale=Heatmap_Color, zmin=Heatmap_MinVal, zmax=100, hoverinfo = "none") 
     fig_Heatmap_orf2b5a.layout.update(title="Orf2b through Orf5a Amino Acid Heatmap", width=size, height=size, 
-                                        margin=go.Margin(l=200,r=75,b=200,t=50,pad=4), xaxis=dict(side='bottom'))
+                                        margin=go.Margin(l=200,r=100,b=200,t=50,pad=4), xaxis=dict(side='bottom'))
 except:
     fig_Heatmap_orf2b5a = None
     
 
 # Create Plots
-html_orfDropdown_n = plot(fig_orfDropdown_n, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False})
-html_orfDropdown_a = plot(fig_orfDropdown_a, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False})
+html_orfDropdown_n = plot(fig_orfDropdown_n, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
+html_orfDropdown_a = plot(fig_orfDropdown_a, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
 html_vaccinePlots_n = []
 html_vaccinePlots_a = []
 for i,f in enumerate(fig_vaccines_n):
-    html_vaccinePlots_n.append(plot(f, filename=OutputFolder + "/ReportParts/vaccine_n" + str(i+1) + ".html", auto_open=False, config={'showLink': False}))
+    html_vaccinePlots_n.append(plot(f, filename=OutputFolder + "/ReportParts/vaccine_n" + str(i+1) + ".html", auto_open=False, config={'showLink': False, 'displayModeBar': False}))
 for i,f in enumerate(fig_vaccines_a):
-    html_vaccinePlots_a.append(plot(f, filename=OutputFolder + "/ReportParts/vaccine_a" + str(i+1) + ".html", auto_open=False, config={'showLink': False}))
-html_heatmap_wholegenome = plot(fig_Heatmap_Wholegenome, filename=OutputFolder + "/ReportParts/heatmap_wholegenome.html", auto_open=False, config={'showLink': False})
-html_heatmap_orf2b5a = plot(fig_Heatmap_orf2b5a, filename=OutputFolder + "/ReportParts/heatmap_orf2b5a.html" , auto_open=False, config={'showLink': False})
-html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportParts/recombination.html" , auto_open=False, config={'showLink': False})
+    html_vaccinePlots_a.append(plot(f, filename=OutputFolder + "/ReportParts/vaccine_a" + str(i+1) + ".html", auto_open=False, config={'showLink': False, 'displayModeBar': False}))
+html_heatmap_wholegenome = plot(fig_Heatmap_Wholegenome, filename=OutputFolder + "/ReportParts/heatmap_wholegenome.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
+html_heatmap_orf2b5a = plot(fig_Heatmap_orf2b5a, filename=OutputFolder + "/ReportParts/heatmap_orf2b5a.html" , auto_open=False, config={'showLink': False, 'displayModeBar': False})
+html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportParts/recombination.html" , auto_open=False, config={'showLink': False, 'displayModeBar': False})
 
 
 # Add to html

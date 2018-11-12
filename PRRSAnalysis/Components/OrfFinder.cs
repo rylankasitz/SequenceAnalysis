@@ -264,7 +264,7 @@ namespace PRRSAnalysis.Components
                     {
                         _dataManager.SequencesUsed[seq].KnownOrfData.Remove(orf);
                         _dataManager.AnalysisNames.Remove(orf + "_n");
-                        _dataManager.AnalysisNames.Remove(orf + "_a");
+                        _dataManager.AnalysisNames.Remove(orf + "_aa");
                     }
                 }
             }

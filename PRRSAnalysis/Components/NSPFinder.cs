@@ -12,7 +12,6 @@ namespace PRRSAnalysis.Components
     {
         private DataManager _dataManager;
 
-
         public NSPFinder(DataManager dataManager)
         {
             _dataManager = dataManager;

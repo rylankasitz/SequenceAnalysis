@@ -28,14 +28,17 @@ namespace PRRSAnalysis.Components
             {
                 _commandlineRun.ProgramName = "PhyML-3.1_win32.exe";
                 string infile = _dataManager.FastaToPhyiFile(_dataManager.Alignments[analysisItem].FileLocation);
-                _commandlineRun.Arguments = "-i " + infile;
-                _commandlineRun.Run();
-
-                if (!_dataManager.TreeData.ContainsKey(analysisItem))
+                if (new FileInfo(infile).Length != 0)
                 {
-                    _dataManager.TreeData.Add(analysisItem, new TreeData());
+                    _commandlineRun.Arguments = "-i " + infile;
+                    _commandlineRun.Run();
+
+                    if (!_dataManager.TreeData.ContainsKey(analysisItem))
+                    {
+                        _dataManager.TreeData.Add(analysisItem, new TreeData());
+                    }
+                    _dataManager.TreeData[analysisItem].NewickFile = Path.GetFullPath(infile + "_phyml_tree.txt");
                 }
-                _dataManager.TreeData[analysisItem].NewickFile = Path.GetFullPath(infile + "_phyml_tree.txt");
             }
 
             updateProgressBar((int)(350 / (float)_dataManager.AnalysisCount));

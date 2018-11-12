@@ -3,9 +3,9 @@
 block_cipher = None
 
 a = Analysis(['OutputGraphs.py'],
-             pathex=['C:\\Users\\rylankasitz\\source\\repos\\PRRSAnalysisProject\\PRRSAnalysisProject'],
+             pathex=['C:\\Users\\Rylan\\source\\repos\\\SequenceAnalysis\\OutputGraphs'],
              binaries=[],
-             datas=[('C:\\Python27\\Lib\\site-packages\\plotly\\package_data\\*', 'plotly\\package_data')],
+             datas=[('C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\Lib\\site-packages\\plotly\\package_data\\*', 'plotly\\package_data')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],

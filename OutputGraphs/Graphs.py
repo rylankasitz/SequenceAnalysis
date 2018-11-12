@@ -81,8 +81,8 @@ def CreateNewDropDown(seqs, odata):
         visible[i] = True
         buttons.append(dict(args=[{'visible': visible}, {'annotations': odata[i].annotations}], label=d, method='update'))
         visible = [False]*len(seqs)
-    return [dict(active=0, showactive=False, buttons=buttons, direction = 'down', pad = {'r': 10, 't': 0 }, x = 0, 
-                 xanchor = 'left', y = 1.6, yanchor = 'middle')]
+    return [dict(active=0, showactive=False, buttons=buttons, direction = 'up', pad = {'r': 10, 't': 0 }, x = 0, 
+                 xanchor = 'left', y = 0, yanchor = 'top')]
 
 
 def CreateRecombinationGraph(inputData, colors, sequencesdata, title=""):
@@ -122,7 +122,7 @@ def CreateRecombinationGraph(inputData, colors, sequencesdata, title=""):
     if height < 300:
         height = 300
     for i, key in enumerate(bpsdata.keys()):
-        data.append(go.Bar(y=inputData.keys(), x=HelperMethods.match(inputData.keys(), bpsdata[key], full=True), name=labels[(i)%2], orientation = 'h',
+        data.append(go.Bar(y=list(inputData.keys()), x=HelperMethods.match(inputData.keys(), bpsdata[key], full=True), name=labels[(i)%2], orientation = 'h',
                     text=HelperMethods.match(inputData.keys(), bpsPoints[key], full=True), marker=dict(color=colors[(i)%2]), 
                     hoverinfo='text')) 
     return go.Figure(data=data, layout=go.Layout(title=title, barmode='stack', height=height, showlegend=False, margin=go.Margin(l=200,r=100,b=100,t=100,pad=4)))
@@ -147,23 +147,29 @@ def CreateOrfPlot(data, seqname, seqdata, Heatmap_Color, Heatmap_MinVal, analysi
     sequences = []
     cn = ca = 0
     for orf in analysisnames:
-        if orf != "Wholegenome" and orf != "Orf2b-Orf5a_aa" and orf != "Orf2b-Orf5a_n":
-            type = orf.split("_")[1]
-            name = orf.split("_")[0]
-            if type == "n": pidata_n.append([])
-            if type == "aa": pidata_a.append([])
+        if orf != "Orf2b-Orf5a_aa" and orf != "Orf2b-Orf5a_n":
+            if orf == "Wholegenome":
+                pidata_a.append([])
+                pidata_n.append([])
+                type = "Genome"
+                name = "Genome"
+            else:
+                type = orf.split("_")[1]
+                name = orf.split("_")[0]
+                if type == "n": pidata_n.append([])
+                if type == "aa": pidata_a.append([])
             for seqn, val in data[orf]["Dic"][seqname].items():
                 if not seqdata[seqn]["Vaccine"] and not seqn == seqname:
-                    if type == "n" : 
+                    if type == "n" or type == "Genome": 
                         pidata_n[cn].append(round(val, 1))
-                    if type == "aa" : 
+                    if type == "aa" or type == "Genome": 
                         pidata_a[ca].append(round(val, 1))
                     if not seqn in sequences:
                         sequences.append(seqn)
             if not name in orfnames:
                 orfnames.append(name)
-            if type == "n": cn+=1
-            if type == "aa": ca+=1
+            if type == "n" or type == "Genome": cn+=1
+            if type == "aa" or type == "Genome": ca+=1
     pidata_a = list(map(list, zip(*pidata_a)))
     pidata_n = list(map(list, zip(*pidata_n)))
 
@@ -175,8 +181,11 @@ def CreateOrfPlot(data, seqname, seqdata, Heatmap_Color, Heatmap_MinVal, analysi
                                        hoverinfo = "none", ygap = 10)
     fig_a['layout']['title'] = title + " (Amino Acid)"
     fig_a['layout']['xaxis']['showgrid'] = False
-    height = fig_a['layout']['height'] = len(sequences)*75
-    fig_a['layout']['margin'] = dict(l=200, r=0)
+    height = fig_a['layout']['height'] = len(sequences)*75 + 75
+    if height < 300:
+        height = fig_a['layout']['height'] = 300
+    fig_a['layout']['margin'] = dict(l=200, r=0, t=150)
+    fig_a['layout']['xaxis']['tickangle'] = 45
     for i in range(len(fig_a.layout.annotations)):
         fig_a.layout.annotations[i].font.size = 10
 
@@ -184,8 +193,11 @@ def CreateOrfPlot(data, seqname, seqdata, Heatmap_Color, Heatmap_MinVal, analysi
                                        hoverinfo = "none", ygap = 10)
     fig_n['layout']['title'] = title + " (Nucleotide)"
     fig_n['layout']['xaxis']['showgrid'] = False
-    height = fig_n['layout']['height'] = len(sequences)*75
-    fig_n['layout']['margin'] = dict(l=200, r=0)
+    height = fig_n['layout']['height'] = len(sequences)*75 + 75
+    if height < 300:
+        height = fig_n['layout']['height'] = 300
+    fig_n['layout']['margin'] = dict(l=200, r=0, t=150)
+    fig_n['layout']['xaxis']['tickangle'] = 45
     for i in range(len(fig_n.layout.annotations)):
         fig_n.layout.annotations[i].font.size = 10
 
@@ -214,11 +226,11 @@ def CreateHtmlPlotString(src, title="", width=0, height=0, padding_top=0, min_wi
     return string
 
 def CreateImageHtmlString(location, width='auto', height='auto', title="", min_width=500):
-    encoded = base64.b64encode(open(location, "rb").read())
+    encoded = base64.b64encode(open(location, "rb").read()).decode("utf-8") 
     return '''<div width="''' + str(width) + '''" height="''' + str(height) + '''"
                 style="min-width:''' + str(min_width) +''';">
                 <center style="float:left;min-width:''' + str(min_width) + ''';"><h4>''' + title + '''</h4></center>
-                <img src="data:image/png;base64, ''' + encoded + '''" width="''' + str(width) + '''"/></div>'''
+                <img src="data:image/png;base64, ''' + str(encoded) + '''" width="''' + str(width) + '''"/></div>'''
 
 def InitalizeHtmlString():
     return '''<html><head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">

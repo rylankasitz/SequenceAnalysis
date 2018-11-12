@@ -28,6 +28,9 @@ namespace PRRSAnalysis.Output
 
         public override void Run(UpdateProgressBar updateProgressBar)
         {
+            // Remove Data
+            _dataManager.RemoveAllFiles(_dataManager.OutputFolder);
+
             // Write Data    
             moveAlignmentFiles();
             writeSiteChanges();

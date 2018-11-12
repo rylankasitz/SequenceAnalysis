@@ -27,9 +27,9 @@ namespace PRRSAnalysis.DataStorage
 
         public Dictionary<string, string[]> AminoAcidChart { get; set; }
         public Dictionary<string, OrfsTemplate> OrfTemplates { get; set; }
-        public float OrfLengthThreshold { get; } = .3f;
+        public float OrfLengthThreshold { get; } = .5f;
         public float OrfIdentifierPIThreshold { get; } = 0;
-        public float OrfSiteRange { get; } = 2500;
+        public float OrfSiteRange { get; } = 4000;
         public Dictionary<string, NSPTemplate> NSPTemplate { get; set; }
 
         #endregion
@@ -174,6 +174,7 @@ namespace PRRSAnalysis.DataStorage
         }
         public string CutName(string name)
         {
+            if (Char.IsDigit(name[0])) name = "s-" + name;
             if (name.Length > MaximunNameLength) name = name.Split(' ')[0];
             if (name.Length > MaximunNameLength) name = name.Substring(0, MaximunNameLength);
             name = name.Replace("(", "[");
@@ -296,6 +297,20 @@ namespace PRRSAnalysis.DataStorage
             catch
             {
                 throw new Exception("Unable to move file " + src + " to " + dest);
+            }
+        }
+
+        public void RemoveAllFiles(string src)
+        {
+            DirectoryInfo di = new DirectoryInfo(src);
+
+            foreach (FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (DirectoryInfo dir in di.GetDirectories())
+            {
+                dir.Delete(true);
             }
         }
 
