@@ -22,6 +22,7 @@ namespace PRRSAnalysis.Components
             _dataManager = dataManager;
             _commandlineRun = new CommandlineRun();
         }
+
         public override void Run(string name, UpdateProgressBar updateProgressBar)
         {         
             bool isOrfFile = false;

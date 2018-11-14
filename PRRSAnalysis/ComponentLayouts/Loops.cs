@@ -11,6 +11,11 @@ namespace PRRSAnalysis.ComponentLayouts
     {
         public abstract void Initialize();
     }
+    public abstract class InitialLoop
+    {
+        public int Priority { get; set; } = 3;
+        public abstract void Run(string name, UpdateProgressBar updateProgressBar);
+    }
     public abstract class SingleLoop
     {
         public int Priority { get; set; } = 3;

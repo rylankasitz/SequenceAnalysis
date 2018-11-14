@@ -23,6 +23,7 @@ namespace PRRSAnalysis
         private IEnumerable<AnalysisLoop> _analysisComponents;
         private IEnumerable<SequenceLoop> _sequenceLoop;
         private IEnumerable<SingleLoop> _singleLoops;
+        private IEnumerable<InitialLoop> _initialRun;
         private DataManager _dataManager;
         private UpdateProgressBar _updateProgressBar;
 
@@ -32,6 +33,7 @@ namespace PRRSAnalysis
             _analysisComponents = GetEnumerableOfType<AnalysisLoop>(dataManager).OrderBy(s => s.Priority);
             _sequenceLoop = GetEnumerableOfType<SequenceLoop>(dataManager).OrderBy(s => s.Priority);
             _singleLoops = GetEnumerableOfType<SingleLoop>(dataManager).OrderBy(s => s.Priority);
+            _initialRun = GetEnumerableOfType<InitialLoop>(dataManager).OrderBy(s => s.Priority);
             _dataManager = dataManager;
             _dataManager.AnalysisNames.Add("Wholegenome");
         }
@@ -87,7 +89,7 @@ namespace PRRSAnalysis
            }
            catch(Exception e)
            {
-                MessageBox.Show("Analysis Failed\n" + e.ToString());
+                MessageBox.Show("Analysis Failed\n" + e.Message);
                 _updateProgressBar(1000);
            }
         }
