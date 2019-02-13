@@ -216,13 +216,19 @@ def addCol(width):
 def endCol():
     return '''</div>'''
 
-def CreateHtmlPlotString(src, title="", width=0, height=0, padding_top=0, min_width=380):    
-    src = src.replace(r"file://", "")
-    content = open(src, 'r').read().replace("'", '"')
-    content = "'" + content[:12] + '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>' + content[12:] + "'"
-    string = '''<iframe width="''' + str(width) + '''" height="''' + str(height) + '''" padding-top="''' + str(padding_top) + '''" 
+def CreateHtmlPlotString(src, title="", width=0, height=0, padding_top=0, min_width=380):  
+    text = "";
+    content = "";
+    string = ""
+    if (src == None): 
+        string = ""
+    else : 
+        src = src.replace(r"file://", "")
+        content = open(src, 'r').read().replace("'", '"')
+        content = "'" + content[:12] + '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>' + content[12:] + "'"
+        string = '''<iframe width="''' + str(width) + '''" height="''' + str(height) + '''" padding-top="''' + str(padding_top) + '''" 
                           frameborder="0" seamless="seamless" scrolling="no" srcdoc=''' + content + ''' 
-                          style="min-width:''' + str(min_width) +''';"></iframe>'''
+                          style="min-width:''' + str(min_width) +''';">''' + text + '''</iframe>'''
     return string
 
 def CreateImageHtmlString(location, width='auto', height='auto', title="", min_width=500):

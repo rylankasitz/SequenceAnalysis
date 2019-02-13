@@ -60,17 +60,18 @@ namespace PRRSAnalysis
         }
         public void ThreadProc()
         {
-            try
-            { 
+           // try
+            //{ 
                 DateTime startTime = DateTime.Now;
                 _dataManager.SequenceCount = _dataManager.SequencesUsed.Count;
                 foreach (SequenceLoop component in _sequenceLoop)
                 {
                     component.OnRunStart();
-                    foreach (string sequence in _dataManager.SequencesUsed.Keys)
+                    component.Run("", _updateProgressBar);
+                    /*foreach (string sequence in _dataManager.SequencesUsed.Keys)
                     {
                         component.Run(sequence, _updateProgressBar);
-                    }
+                    }*/
                 }
                 _dataManager.AnalysisCount = _dataManager.AnalysisNames.Count;
                 foreach (AnalysisLoop component in _analysisComponents)
@@ -86,12 +87,12 @@ namespace PRRSAnalysis
                 }
                 _dataManager.RunTime = DateTime.Now - startTime;  
                 MessageBox.Show("Analysis Finished\n" + "Time Elapesed: " + _dataManager.RunTime.ToString(@"hh\:mm\:ss"));              
-           }
-           catch(Exception e)
-           {
-                MessageBox.Show("Analysis Failed\n" + e.Message);
-                _updateProgressBar(1000);
-           }
+          // }
+           //catch(Exception e)
+           //{
+           //     MessageBox.Show("Analysis Failed\n" + e.Message);
+           //     _updateProgressBar(1000);
+           //}
         }
     }
 }

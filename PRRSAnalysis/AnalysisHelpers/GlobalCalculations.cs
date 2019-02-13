@@ -33,8 +33,8 @@ namespace PRRSAnalysis.AnalysisHelpers
         public static float CalculatePercentIdentity(string sequence1, string sequence2)
         {
             int totalIdentity = 0;
-            if (sequence1.Length < sequence2.Length) sequence2 = sequence2.Substring(0, sequence1.Length);
-            else sequence1 = sequence1.Substring(0, sequence2.Length);
+            if (sequence1.Length < sequence2.Length) sequence1 += new string('-', sequence2.Length - sequence1.Length);
+            else sequence2 += new string('-', sequence1.Length - sequence2.Length);
             for (int i = 0; i < sequence1.Length; i++)
             {
                 if (sequence1[i] == sequence2[i])

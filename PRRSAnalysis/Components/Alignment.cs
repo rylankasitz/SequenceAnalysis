@@ -27,6 +27,7 @@ namespace PRRSAnalysis.Components
         {         
             bool isOrfFile = false;
             if (name != "Wholegenome") isOrfFile = true;
+            if (File.Exists(_dataManager.DataFolder + name + ".fasta")) return;
             _dataManager.CreateOneSequenceFile(name, isOrfFile);
 
             string outfile = _dataManager.AnalysisFiles[name] + "_aligned.fasta";
@@ -44,7 +45,7 @@ namespace PRRSAnalysis.Components
             _dataManager.Alignments[name].Contents = _dataManager.FileToSequences(outfile);
             _dataManager.Alignments[name].FileLocation = outfile;
 
-            updateProgressBar((int)(400 / (float)_dataManager.AnalysisCount));
+            if(_dataManager.AnalysisCount != 0) updateProgressBar((int)(400 / (float)_dataManager.AnalysisCount));
         }
         private string getArgs()
         {

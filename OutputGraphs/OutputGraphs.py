@@ -171,8 +171,9 @@ except:
     
 
 # Create Plots
-html_orfDropdown_n = plot(fig_orfDropdown_n, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
-html_orfDropdown_a = plot(fig_orfDropdown_a, filename=OutputFolder + "/ReportParts/orfgraph.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
+html_recombination = None;
+html_orfDropdown_n = plot(fig_orfDropdown_n, filename=OutputFolder + "/ReportParts/orfgraph_n.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
+html_orfDropdown_a = plot(fig_orfDropdown_a, filename=OutputFolder + "/ReportParts/orfgraph_a.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
 html_vaccinePlots_n = []
 html_vaccinePlots_a = []
 for i,f in enumerate(fig_vaccines_n):
@@ -181,8 +182,8 @@ for i,f in enumerate(fig_vaccines_a):
     html_vaccinePlots_a.append(plot(f, filename=OutputFolder + "/ReportParts/vaccine_a" + str(i+1) + ".html", auto_open=False, config={'showLink': False, 'displayModeBar': False}))
 html_heatmap_wholegenome = plot(fig_Heatmap_Wholegenome, filename=OutputFolder + "/ReportParts/heatmap_wholegenome.html", auto_open=False, config={'showLink': False, 'displayModeBar': False})
 html_heatmap_orf2b5a = plot(fig_Heatmap_orf2b5a, filename=OutputFolder + "/ReportParts/heatmap_orf2b5a.html" , auto_open=False, config={'showLink': False, 'displayModeBar': False})
-html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportParts/recombination.html" , auto_open=False, config={'showLink': False, 'displayModeBar': False})
-
+if(fig_recombination != None): 
+    html_recombination = plot(fig_recombination, filename=OutputFolder + "/ReportParts/recombination.html" , auto_open=False, config={'showLink': False, 'displayModeBar': False})
 
 # Add to html
 recomb_height = len(RecombinationData)*125

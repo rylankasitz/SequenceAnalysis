@@ -18,6 +18,7 @@ namespace PRRSAnalysis.DataStorage
         public string Sequence { get; set; }
         public int LengthAA { get; set; }
         public int StartSite { get; set; }
+        public int EndSite { get; set; }
         public bool HardSet { get; set; } = false;
     }
     public class NSPTemplate

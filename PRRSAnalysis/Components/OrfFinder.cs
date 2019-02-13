@@ -32,32 +32,45 @@ namespace PRRSAnalysis.Components
 
         public override void Run(string sequenceName, UpdateProgressBar updateProgressBar)
         {
-            _currentSeqs.Add(sequenceName);
-            string contents = _dataManager.SequencesUsed[sequenceName].Contents;
+            //if (sequenceName == "Wholegenome")
+           // {
+                Alignment alignment = new Alignment(_dataManager);
+                alignment.Run("Wholegenome", updateProgressBar);
+                //return;
+            //}
 
-            Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
-            addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
-            _dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
-            getRidOfRepeates(_dataManager.SequencesUsed[sequenceName].KnownOrfData);
-
-            foreach (List<string> orfs in _dataManager.CombinedOrfs)
+            //_currentSeqs.Add(sequenceName);
+            
+            Dictionary<string, int[]> orfAlignedLocations = findOrfAlignmentLocations("P129_Partent_of_Fostera");
+            foreach (string seqName in _dataManager.SequencesUsed.Keys)
             {
-                try {
-                    createCombinedOrf(orfs, sequenceName);
+                string contents = _dataManager.SequencesUsed[seqName].Contents;
+                string alignedContents = _dataManager.Alignments["Wholegenome"].Contents[seqName];
+                Dictionary<string, int[]> allOrfs = findAllOrfs(alignedContents, true);
+                _dataManager.SequencesUsed[seqName].KnownOrfData = findKnownOrfs(seqName, orfAlignedLocations, alignedContents);
+                _dataManager.SequencesUsed[seqName].OtherOrfData = findUnknownOrfs(allOrfs, contents);
+                foreach (List<string> orfs in _dataManager.CombinedOrfs)
+                {
+                    try
+                    {
+                        createCombinedOrf(orfs, seqName);
+                    }
+                    catch { }
                 }
-                catch { }
             }
-            matchOrfs(sequenceName);
 
-            updateProgressBar((int) (70 / (float) _dataManager.SequenceCount));
+            //Dictionary<string, int[]> allOrfs = findAllOrfs(alignedContents);
+            //addOrfToData(_dataManager.SequencesUsed[sequenceName].OtherOrfData, allOrfs, contents);
+            //_dataManager.SequencesUsed[sequenceName].KnownOrfData = findKnownOrfs(_dataManager.SequencesUsed[sequenceName].OtherOrfData);
+            //getRidOfRepeates(_dataManager.SequencesUsed[sequenceName].KnownOrfData);
+
+            
+            //matchOrfs(sequenceName);
+
+            updateProgressBar((int)(70 / (float)_dataManager.SequenceCount));
         }
 
-        /// <summary>
-        /// Finds all of the orfs in a string of nucleotide sequences
-        /// </summary>
-        /// <param name="contents">Contents of file in nt</param>
-        /// <returns>Dictionary of all orfs with location</returns>
-        private Dictionary<string, int[]> findAllOrfs(string contents)
+        private Dictionary<string, int[]> findAllOrfs(string contents, bool removeGaps = false)
         {
             int seqeuenceLength = contents.Length;
             Dictionary<string, int[]> allOrfs = new Dictionary<string, int[]>();
@@ -65,53 +78,74 @@ namespace PRRSAnalysis.Components
             Dictionary<int, List<int>> StartCodons = new Dictionary<int, List<int>>();
             Dictionary<int, List<int>> StopCodons = new Dictionary<int, List<int>>();
 
-            // Get complement sequence
+            /*// Get complement sequence
             string complement = switchChars(contents, 'a', 'g');
             complement = switchChars(complement, 't', 'c');
-            complement = reverse(complement);
+            complement = reverse(complement);*/
+            int frameCount = 0;
+            int gapCount = 0;
 
             // Get all start and stop codons
             for (int i = 0; i < contents.Length - 2; i++)
             {
-                string codon = contents.Substring(i, 3).ToLower();
-                string rcodon = complement.Substring(i, 3).ToLower();
-                foreach (string c in _dataManager.AminoAcidChart["Start"]) {
+                string codon = ""; int codonCount = 0;
+                //string rcodon = "---";
+                if (contents[i] == '-')
+                {
+                    if (removeGaps) gapCount++;
+                    continue;                  
+                }
+                if (frameCount < 3) frameCount++;
+                else frameCount = 1;
+            
+                while (codon.Length < 3)
+                {
+                    if ((i + codonCount) >= contents.Length) break;
+                    if (contents[i + codonCount] != '-')
+                    {
+                        codon += contents[i + codonCount];
+                    }
+                    codonCount++;
+                }
+
+                foreach (string c in _dataManager.AminoAcidChart["Start"])
+                {
                     if (c == codon)
                     {
-                        if (!StartCodons.ContainsKey((i % 3) + 1)) StartCodons.Add((i % 3) + 1, new List<int>());
-                        StartCodons[(i % 3) + 1].Add(i);
+                        if (!StartCodons.ContainsKey(frameCount)) StartCodons.Add(frameCount, new List<int>());
+                        StartCodons[frameCount].Add(i - gapCount);
                     }
-                    else if (c == rcodon && _dataManager.RunReverseFrames)
+                    /*else if (c == rcodon && _dataManager.RunReverseFrames)
                     {
                         if (!StartCodons.ContainsKey(-((i % 3) + 1))) StartCodons.Add(-((i % 3) + 1), new List<int>());
                         StartCodons[-((i % 3) + 1)].Add(i);
-                    }
+                    }*/
                 }
                 foreach (string c in _dataManager.AminoAcidChart["Stop"])
                 {
                     if (c == codon)
                     {
-                        if (!StopCodons.ContainsKey((i % 3) + 1)) StopCodons.Add((i % 3) + 1, new List<int>());
-                        StopCodons[(i % 3) + 1].Add(i);
+                        if (!StopCodons.ContainsKey(frameCount)) StopCodons.Add(frameCount, new List<int>());
+                        StopCodons[frameCount].Add(i - gapCount);
                     }
-                    else if (c == rcodon && _dataManager.RunReverseFrames)
+                    /*else if (c == rcodon && _dataManager.RunReverseFrames)
                     {
                         if (!StopCodons.ContainsKey(-((i % 3) + 1))) StopCodons.Add(-((i % 3) + 1), new List<int>());
                         StopCodons[-((i % 3) + 1)].Add(i);
-                    }
+                    }*/
                 }
             }
 
             // Find all orfs
             int orfCount = 1;
-            foreach(KeyValuePair<int, List<int>> startCondonPair in StartCodons)
+            foreach (KeyValuePair<int, List<int>> startCondonPair in StartCodons)
             {
-                foreach(KeyValuePair<int, List<int>> stopCodonPair in StopCodons)
+                foreach (KeyValuePair<int, List<int>> stopCodonPair in StopCodons)
                 {
-                    if(startCondonPair.Key == stopCodonPair.Key)
+                    if (startCondonPair.Key == stopCodonPair.Key)
                     {
                         int previousEnd = 0;
-                        foreach(int startPosition in startCondonPair.Value)
+                        foreach (int startPosition in startCondonPair.Value)
                         {
                             if (startPosition >= previousEnd)
                             {
@@ -136,15 +170,66 @@ namespace PRRSAnalysis.Components
                     }
                 }
             }
-            return allOrfs;   
+            return allOrfs;
         }
 
+        private Dictionary<string, OrfData> findKnownOrfs(string sequence, Dictionary<string, int[]> locations, string alignedContents)
+        {
+            Dictionary<string, OrfData> orfData = new Dictionary<string, OrfData>();
+            foreach (KeyValuePair<string, int[]> location in locations)
+            {
+                string orfContents_n = alignedContents.Substring(location.Value[0], location.Value[1] - location.Value[0] + 3).Replace("-", "");
+                string orfContents_aa = NucleotideToAminoAcid(orfContents_n);
+                int startPos_n = location.Value[0] - alignedContents.Substring(0, location.Value[0] + 1).Count(x => x == '-') + 1;
+                int endPos_n = location.Value[1] - alignedContents.Substring(0, location.Value[1] + 1).Count(x => x == '-') + 3;
+                int startPos_aa = startPos_n / 3;
+                int endPos_aa = endPos_n / 3;
+                orfData[location.Key] = new OrfData()
+                {
+                    Name = location.Key,
+                    ContentsAA = orfContents_aa,
+                    ContentsN = orfContents_n,
+                    StartLocationAA = startPos_aa,
+                    EndLocationAA = endPos_aa,
+                    StartLocationN = startPos_n,
+                    EndLocationN = endPos_n,
+                    LengthAA = endPos_aa - startPos_aa,
+                    LengthN = endPos_n - startPos_n
+                };            
+            }
+            return orfData;
+        }
+
+        private Dictionary<string, OrfData> findUnknownOrfs(Dictionary<string, int[]> orfData, string contents)
+        {
+            Dictionary<string, OrfData> unknownData = new Dictionary<string, OrfData>();
+            foreach (KeyValuePair<string, int[]> orf in orfData)
+            {
+                string contents_n = contents.Substring(orf.Value[0], orf.Value[1] - orf.Value[0]);
+                string contents_aa = NucleotideToAminoAcid(contents_n);
+                unknownData[orf.Key] = new OrfData()
+                {
+                    Name = orf.Key,
+                    StartLocationN = orf.Value[0] + 1,
+                    EndLocationN = orf.Value[1],
+                    StartLocationAA = (orf.Value[0] + 1) / 3,
+                    EndLocationAA = (orf.Value[1]) / 3,
+                    ContentsN = contents_n,
+                    ContentsAA = contents_aa,
+                    LengthAA = contents_aa.Length,
+                    LengthN = contents_n.Length,
+                    ReadingFrame = orf.Value[2]
+                };
+            }
+            return unknownData;
+        }
+        
         /// <summary>
         /// Compares all orfs to the orf templates to find all of the known orfs
         /// </summary>
         /// <param name="allOrfs"></param>
         /// <returns>Dictionary of orfs with location data</returns>
-        private Dictionary<string, OrfData> findKnownOrfs(Dictionary<string, OrfData> allOrfs)
+        /*private Dictionary<string, OrfData> findKnownOrfs(Dictionary<string, OrfData> allOrfs)
         {
             Dictionary<string, OrfData> knownOrfs = new Dictionary<string, OrfData>();
             Dictionary<string, List<OrfData>> potentialOrfs = new Dictionary<string, List<OrfData>>();
@@ -204,13 +289,44 @@ namespace PRRSAnalysis.Components
                 }
             }
             return knownOrfs;
+        }*/
+        
+        private Dictionary<string, int[]> findOrfAlignmentLocations(string relatedSequence)
+        {
+            Dictionary<string, int[]> locations = new Dictionary<string, int[]>();
+            OrfsTemplate orfTemplates = _dataManager.OrfTemplates[_dataManager.CurrentVirusKey];
+            string contents = _dataManager.Alignments["Wholegenome"].Contents[relatedSequence];
+            Dictionary<string, int[]> allOrfs = findAllOrfs(contents);
+            foreach (OrfTemplate orfTemplate in orfTemplates.Orfs)
+            {              
+                int[] closestOrf = new int[3];
+                float highestPI = 0;
+                foreach(int[] orf in allOrfs.Values)
+                {
+                    int start = orf[0];
+                    if (orfTemplate.HardSet)
+                    {
+                        start = findStartPos(contents.Replace("-","").Substring(orfTemplate.StartSite - 1, orfTemplate.LengthAA * 3), contents) - 2;
+                        if (start > orf[1]) start = 0;
+                    }        
+                    string newOrfContents = NucleotideToAminoAcid(contents.Substring(start, orf[1] - start).Replace("-", ""));
+                    float pi = GlobalCalculations.CalculatePercentIdentity(newOrfContents, orfTemplate.Sequence);
+                    if (pi > highestPI) { highestPI = pi; closestOrf = new int[3] { start, orf[1], orf[2] }; }
+                }
+                locations[orfTemplate.Name] = closestOrf;
+                if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_n"))
+                    _dataManager.AnalysisNames.Add(orfTemplate.Name + "_n");
+                if (!_dataManager.AnalysisNames.Contains(orfTemplate.Name + "_aa"))
+                    _dataManager.AnalysisNames.Add(orfTemplate.Name + "_aa");
+            }
+            return locations;
         }
 
         /// <summary>
-        /// 
+        /// Gets rid of all repeated orfs in a dictionary
         /// </summary>
         /// <param name="knownOrfs"></param>
-        private void getRidOfRepeates(Dictionary<string, OrfData> knownOrfs)
+        /*private void getRidOfRepeates(Dictionary<string, OrfData> knownOrfs)
         {
             Dictionary<string, OrfData> knownOrfsCopy = new Dictionary<string, OrfData>(knownOrfs);
             Dictionary<string, OrfData> knownOrfsCopy1 = new Dictionary<string, OrfData>(knownOrfs);
@@ -235,7 +351,7 @@ namespace PRRSAnalysis.Components
                     }
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Matches all orfs so each sequence has the same orfs
@@ -243,7 +359,7 @@ namespace PRRSAnalysis.Components
         /// <param name="data"></param>
         /// <param name="contents"></param>
         /// <param name="sequencename"></param>
-        private void matchOrfs(string sequence)
+        /*private void matchOrfs(string sequence)
         {
             List<string> unsharedOrfs = new List<string>();
             string firstKey = _dataManager.SequencesUsed.Keys.First();
@@ -268,7 +384,7 @@ namespace PRRSAnalysis.Components
                     }
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Adds orfs the the data manager
@@ -276,7 +392,7 @@ namespace PRRSAnalysis.Components
         /// <param name="data"></param>
         /// <param name="orfs"></param>
         /// <param name="contents"></param>
-        private void addOrfToData(Dictionary<string, OrfData> data, Dictionary<string, int[]> orfs, string contents)
+        /*private void addOrfToData(Dictionary<string, OrfData> data, Dictionary<string, int[]> orfs, string contents)
         {
             foreach(KeyValuePair<string, int[]> orfDataPair in orfs)
             {
@@ -295,7 +411,7 @@ namespace PRRSAnalysis.Components
                 data[orfDataPair.Key].LengthAA = length / 3 + 1;
                 data[orfDataPair.Key].ReadingFrame = orfDataPair.Value[2]; 
             }            
-        }
+        }*/
 
         #region Private Helper Methods
 
@@ -363,13 +479,38 @@ namespace PRRSAnalysis.Components
             }
             return "";
         }
-        private OrfTemplate findOrfTemplate(string name)
+        /*private OrfTemplate findOrfTemplate(string name)
         {
             foreach(OrfTemplate orfTemplate in _dataManager.OrfTemplates[_dataManager.CurrentVirusKey].Orfs)
             {
                 if (orfTemplate.Name == name) return orfTemplate;
             }
             return null;
+        }*/
+        private int findStartPos(string comparedSeq, string alignedSeq)
+        {
+            int thres = 10;
+            for(int i = 0; i < alignedSeq.Length; i++)
+            {
+                int c = 0; int nc = 0;
+                while(nc < thres)
+                {
+                    if(alignedSeq[i + c] != '-')
+                    {
+                        if(alignedSeq[i + c] == comparedSeq[nc])
+                        {
+                            nc++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    c++;
+                    if (nc == thres) return i;
+                }
+            }
+            return 0;
         }
 
         #endregion
